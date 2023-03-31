@@ -9,26 +9,38 @@ class Story extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'id';
+
     protected $fillable = [
-        'item_id',
+        'id',
         'title',
         'url',
         'text',
-        'user_id',
+        'score',
+        'by',
         'parent_id',
         'points',
         'comments_count',
         'type',
-        'category'
+        'category',
+        'time',
+        'descendants',
+        'deleted',
+        'dead',
     ];
 
     public function author()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Author::class, 'by');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Story::class, 'parent_id');
     }
 
     public function comments()
     {
-        return $this->hasMany(Comment::class);
+        return $this->hasMany(Comment::class, 'parent_id')->orderBy('time');
     }
 }
