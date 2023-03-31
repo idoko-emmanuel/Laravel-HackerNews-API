@@ -13,6 +13,18 @@ return new class extends Migration
     {
         Schema::create('stories', function (Blueprint $table) {
             $table->id();
+            $table->integer('item_id')->unique();
+            $table->string('title');
+            $table->text('url')->nullable();
+            $table->text('text')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->integer('points')->default(0);
+            $table->integer('comments_count')->default(0);
+            $table->string('type')->default('story');
+            $table->enum('category', ['top', 'new', 'show', 'ask', 'job', 'best']);
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('parent_id')->references('id')->on('stories')->onDelete('cascade');
             $table->timestamps();
         });
     }
