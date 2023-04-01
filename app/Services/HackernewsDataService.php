@@ -1,6 +1,9 @@
 <?php 
 namespace App\Services;
 
+use CreateNewComment;
+use Illuminate\Support\Facades\Http;
+
 class HackernewsDataService 
 {
     const LIMIT = 100;
@@ -12,18 +15,73 @@ class HackernewsDataService
         $this->successfulSpool = 0;
     }
 
-    public function spoolFromMaxItem()
+    protected function CreateComment($post_id, CreateNewComment $createcomment) : bool
+    {
+        $response = json_decode(file_get_contents($this->url."item/{$post_id}.json"));
+
+        if (!is_null($response)) {
+            $post = $response->json();
+            $comment_ids = $response->kids;
+            
+            // save comments
+            foreach ($comment_ids as $comment_id) {
+                $comment_response = json_decode(file_get_contents($this->url."item/{$comment_id}.json");
+                if (!is_null($comment_response)) {
+                    $createcomment->create($comment_response);
+                }
+            }
+
+            return true;
+
+        } else {
+            return false;
+        }
+    }
+
+    protected function getAuthor($authorid)
+    {
+        $storyId = 12345; // Replace with the ID of the story or comment
+        // Make a request to the Hacker News API
+        $response = Http::get($this->url."user/{$authorid}.json");
+
+        // Get the author of the story or comment
+        $author = $response['by'];
+    }
+
+    public function spoolFromMaxItem(CreateNewStory $createstory)
     {
         $maxItemId = json_decode(file_get_contents($this->url.'maxitem.json?print=pretty'));
 
         for ($itemId = $maxItemId; $itemId > 0; $itemId--) {
             $itemDetails = json_decode(file_get_contents($this->url."item/{$itemId}.json?print=pretty"));
 
-            if ($itemDetails !== null) {
-                dd($itemDetails);
+            if (!is_null($itemDetails)) {
                 switch ($itemDetails->type) {
                     case 'story':
-                        # code...
+                        //save story if it doesn't
+                        $createstory->create($itemDetails);
+
+                        //save author
+                        $this->getAuthor($itemDetails->by);
+
+                        //save comments 
+                        $this->CreateComment($itemDetails->id);
+                        dd($itemDetails);
+                        $this->successfulSpool++;
+                        break;
+
+                    case 'poll':
+                        //save poll if not already saved
+                        //save author if not already saved
+                        //save poll options if not already saved
+                        //save comments if not already saved
+                        dd($itemDetails);
+                        break;
+
+                    case 'job':
+                        //save job if not already saved
+                        //save author if not already saved
+                        dd($itemDetails);
                         break;
                     
                     default:
@@ -33,12 +91,12 @@ class HackernewsDataService
                 // Process the item details and save them to your database or do whatever you need to do with them.
                 // For example, you can create a new Story or Comment model and fill its attributes with the item details.
 
-                $this->successfulSpool++;
+               
             }else {
                 return false;
             }
 
-            if($this->successfulSpool === LIMIT)
+            if($this->successfulSpool === self::LIMIT)
                 return true;
         }
     }
@@ -164,47 +222,6 @@ class HackernewsDataService
 
         return view('best', ['stories' => $stories]);
 
-    }
-
-    protected function getComment(Type $var = null)
-    {
-        $post_id = 123456; // replace with the ID of the post you want to get the comments for
-
-        $response = Http::get($this->url."item/{$post_id}.json");
-
-        if ($response->successful()) {
-            $post = $response->json();
-            $comment_ids = $post['kids'];
-            
-            // get comments
-            $comments = [];
-            foreach ($comment_ids as $comment_id) {
-                $comment_response = Http::get($this->url."item/{$comment_id}.json");
-                if ($comment_response->successful()) {
-                    $comment = $comment_response->json();
-                    if (isset($comment['text'])) {
-                        $comments[] = $comment;
-                    }
-                }
-            }
-            
-            // print comments
-            foreach ($comments as $comment) {
-                echo "{$comment['by']} said: {$comment['text']}<br><br>";
-            }
-        } else {
-            // handle error
-        }
-    }
-
-    protected function getAuthor(Type $var = null)
-    {
-        $storyId = 12345; // Replace with the ID of the story or comment
-        // Make a request to the Hacker News API
-        $response = Http::get($this->url."item/{$storyId}.json");
-
-        // Get the author of the story or comment
-        $author = $response['by'];
     }
 
 }
