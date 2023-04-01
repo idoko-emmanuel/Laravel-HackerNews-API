@@ -19,10 +19,7 @@ return new class extends Migration
             $table->integer('score')->default(0);
             $table->integer('by')->unsigned();
             $table->unsignedBigInteger('parent_id')->nullable();
-            $table->integer('points')->default(0);
-            $table->integer('comments_count')->default(0);
-            $table->string('type')->default('story');
-            $table->enum('category', ['top', 'new', 'show', 'ask', 'job', 'best']);
+            $table->enum('category', ['top', 'new', 'show', 'ask', 'best']);
             $table->foreign('by')->references('id')->on('authors')->onDelete('cascade');
             $table->foreign('parent_id')->references('id')->on('stories')->onDelete('cascade');
             $table->integer('time');

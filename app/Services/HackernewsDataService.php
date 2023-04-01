@@ -3,36 +3,54 @@ namespace App\Services;
 
 class HackernewsDataService 
 {
-    private $url = config('hackernews.url');
+    const LIMIT = 100;
+    private $url, $successfulSpool;
 
-    private $successfulSpool = 0;
-
-    public function spoolFromMaxItem(Type $var = null)
+    public function __construct()
     {
-        $maxItemId = json_decode(file_get_contents('https://hacker-news.firebaseio.com/v0/maxitem.json?print=pretty'));
+        $this->url = config('hackernews.url');
+        $this->successfulSpool = 0;
+    }
+
+    public function spoolFromMaxItem()
+    {
+        $maxItemId = json_decode(file_get_contents($this->url.'maxitem.json?print=pretty'));
 
         for ($itemId = $maxItemId; $itemId > 0; $itemId--) {
-            $itemDetails = json_decode(file_get_contents("https://hacker-news.firebaseio.com/v0/item/{$itemId}.json?print=pretty"));
+            $itemDetails = json_decode(file_get_contents($this->url."item/{$itemId}.json?print=pretty"));
 
             if ($itemDetails !== null) {
+                dd($itemDetails);
+                switch ($itemDetails->type) {
+                    case 'story':
+                        # code...
+                        break;
+                    
+                    default:
+                        # code...
+                        break;
+                }
                 // Process the item details and save them to your database or do whatever you need to do with them.
                 // For example, you can create a new Story or Comment model and fill its attributes with the item details.
 
                 $this->successfulSpool++;
+            }else {
+                return false;
             }
-            if($this->successfulSpool === 100)
+
+            if($this->successfulSpool === LIMIT)
                 return true;
         }
     }
 
     public function spoolFromTopStories(Type $var = null)
     {
-        $response = Http::get('https://hacker-news.firebaseio.com/v0/topstories.json');
+        $response = Http::get($this->url.'topstories.json');
         $topStoryIds = $response->json();
 
         $topStories = [];
         foreach ($topStoryIds as $storyId) {
-            $response = Http::get("https://hacker-news.firebaseio.com/v0/item/$storyId.json");
+            $response = Http::get($this->url."item/$storyId.json");
             $story = $response->json();
             if ($story && isset($story['title'], $story['url'])) {
                 $topStories[] = [
@@ -45,12 +63,12 @@ class HackernewsDataService
 
     public function spoolFromNewStories(Type $var = null)
     {
-        $url = 'https://hacker-news.firebaseio.com/v0/newstories.json';
+        $url = $this->url.'newstories.json';
         $response = file_get_contents($url);
         $stories = json_decode($response);
 
         foreach ($stories as $storyId) {
-            $url = "https://hacker-news.firebaseio.com/v0/item/$storyId.json";
+            $url = $this->url."item/$storyId.json";
             $response = file_get_contents($url);
             $story = json_decode($response);
 
@@ -64,13 +82,13 @@ class HackernewsDataService
     public function spoolFromShowStories(Type $var = null)
     {
         // Fetch Show HN stories
-        $response = Http::get('https://hacker-news.firebaseio.com/v0/showstories.json');
+        $response = Http::get($this->url.'showstories.json');
         $showHnIds = $response->json();
 
         // Get the latest 10 Show HN stories
         $showHnStories = [];
         foreach (array_slice($showHnIds, 0, 10) as $storyId) {
-            $response = Http::get("https://hacker-news.firebaseio.com/v0/item/{$storyId}.json");
+            $response = Http::get($this->url."item/{$storyId}.json");
             $story = $response->json();
             if (isset($story['title'], $story['url'])) {
                 $showHnStories[] = [
@@ -88,12 +106,12 @@ class HackernewsDataService
 
     public function spoolFromAskStories(Type $var = null)
     {
-        $askStories = Http::get('https://hacker-news.firebaseio.com/v0/askstories.json')->json();
+        $askStories = Http::get($this->url.'askstories.json')->json();
 
         $latestAskStories = array_slice(array_reverse($askStories), 0, 10);
 
         foreach ($latestAskStories as $storyId) {
-            $story = Http::get('https://hacker-news.firebaseio.com/v0/item/'.$storyId.'.json')->json();
+            $story = Http::get($this->url.'item/'.$storyId.'.json')->json();
             echo $story['title']."\n";
             echo "By: ".$story['by']."\n";
             echo "Score: ".$story['score']."\n";
@@ -103,7 +121,7 @@ class HackernewsDataService
 
     public function spoolFromJobs()
     {
-        $url = 'https://hacker-news.firebaseio.com/v0/jobstories.json';
+        $url = $this->url.'jobstories.json';
         $client = new \GuzzleHttp\Client();
         $response = $client->request('GET', $url);
         $jobIds = json_decode($response->getBody(), true);
@@ -111,7 +129,7 @@ class HackernewsDataService
         $jobs = [];
 
         foreach ($jobIds as $jobId) {
-            $jobUrl = "https://hacker-news.firebaseio.com/v0/item/{$jobId}.json";
+            $jobUrl = $this->url."item/{$jobId}.json";
             $jobResponse = $client->request('GET', $jobUrl);
             $job = json_decode($jobResponse->getBody(), true);
 
@@ -132,12 +150,12 @@ class HackernewsDataService
 
     public function spoolFromBestStories(Type $var = null)
     {
-        $bestStories = file_get_contents('https://hacker-news.firebaseio.com/v0/beststories.json');
+        $bestStories = file_get_contents($this->url.'beststories.json');
         $bestStories = array_slice(json_decode($bestStories), 0, 10);
 
         $stories = [];
         foreach ($bestStories as $storyId) {
-            $story = file_get_contents('https://hacker-news.firebaseio.com/v0/item/' . $storyId . '.json');
+            $story = file_get_contents($this->url.'item/' . $storyId . '.json');
             $story = json_decode($story);
             if ($story->type === 'story') {
                 $stories[] = $story;
@@ -152,7 +170,7 @@ class HackernewsDataService
     {
         $post_id = 123456; // replace with the ID of the post you want to get the comments for
 
-        $response = Http::get("https://hacker-news.firebaseio.com/v0/item/{$post_id}.json");
+        $response = Http::get($this->url."item/{$post_id}.json");
 
         if ($response->successful()) {
             $post = $response->json();
@@ -161,7 +179,7 @@ class HackernewsDataService
             // get comments
             $comments = [];
             foreach ($comment_ids as $comment_id) {
-                $comment_response = Http::get("https://hacker-news.firebaseio.com/v0/item/{$comment_id}.json");
+                $comment_response = Http::get($this->url."item/{$comment_id}.json");
                 if ($comment_response->successful()) {
                     $comment = $comment_response->json();
                     if (isset($comment['text'])) {
@@ -183,7 +201,7 @@ class HackernewsDataService
     {
         $storyId = 12345; // Replace with the ID of the story or comment
         // Make a request to the Hacker News API
-        $response = Http::get("https://hacker-news.firebaseio.com/v0/item/{$storyId}.json");
+        $response = Http::get($this->url."item/{$storyId}.json");
 
         // Get the author of the story or comment
         $author = $response['by'];

@@ -11,17 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('comments', function (Blueprint $table) {
+        Schema::create('hacker_jobs', function (Blueprint $table) {
             $table->integer('id')->unique();
+            $table->integer('by')->unsigned();
+            $table->integer('score');
             $table->text('text');
-            $table->unsignedBigInteger('parent_id')->nullable();
-            $table->integer('points')->default(0);
-            $table->foreign('by')->references('id')->on('authors')->onDelete('cascade');
-            $table->foreign('parent_id')->references('id')->on('comments')->onDelete('cascade');
-            $table->Morphs('commentable');
+            $table->integer('time');
+            $table->string('title');
+            $table->string('type');
+            $table->text('url')->nullable();
             $table->boolean('deleted')->default(false);
             $table->boolean('dead')->default(false);
             $table->timestamps();
+            $table->foreign('by')->references('id')->on('authors')->onDelete('cascade');
         });
     }
 
@@ -30,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('comments');
+        Schema::dropIfExists('hacker_jobs');
     }
 };

@@ -34,4 +34,9 @@ class Author extends Model
     {
         return $this->hasMany(Comment::class);
     }
+
+    public function jobs()
+    {
+        return $this->hasMany(Story::class);
+    }
 }

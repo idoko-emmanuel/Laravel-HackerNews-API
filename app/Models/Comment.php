@@ -22,11 +22,6 @@ class Comment extends Model
         return $this->belongsTo(Author::class, 'by');
     }
 
-    public function story()
-    {
-        return $this->belongsTo(Story::class);
-    }
-
     public function parent()
     {
         return $this->belongsTo(Comment::class, 'parent_id');
@@ -35,5 +30,10 @@ class Comment extends Model
     public function children()
     {
         return $this->hasMany(Comment::class, 'parent_id');
+    }
+
+    public function orderable()
+    {
+        return $this->morphTo();
     }
 }

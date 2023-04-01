@@ -5,36 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Story extends Model
+class Poll extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'id';
-
     protected $fillable = [
-        'id',
-        'title',
-        'url',
-        'text',
-        'score',
         'by',
-        'parent_id',
-        'type',
-        'category',
-        'time',
         'descendants',
-        'deleted',
-        'dead',
+        'score',
+        'title',
+        'text',
+        'time',
     ];
 
-    public function author()
+    public function pollOptions()
     {
-        return $this->belongsTo(Author::class, 'by');
-    }
-
-    public function parent()
-    {
-        return $this->belongsTo(Story::class, 'parent_id');
+        return $this->hasMany(Pollopt::class);
     }
 
     public function comment()
