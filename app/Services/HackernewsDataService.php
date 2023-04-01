@@ -1,9 +1,9 @@
 <?php 
 namespace App\Services;
 
-use CreateNewComment;
 use App\Actions\CreateNewStory;
 use App\Actions\CreateNewAuthor;
+use App\Actions\CreateNewComment;
 use Illuminate\Support\Facades\Http;
 
 class HackernewsDataService 
@@ -17,12 +17,12 @@ class HackernewsDataService
         $this->successfulSpool = 0;
     }
 
-    protected function CreateComment($post_id) : bool
+    protected function CreateComment($post_id, $source) : bool
     {
-        $comment_response = new CreateNewComment;
+        $createcomment = new CreateNewComment;
         $response = json_decode(file_get_contents($this->url."item/{$post_id}.json"));
-
-        if (!is_null($response)) {
+        if (!is_null($response) && isset($response->kids)) {
+            
             $comment_ids = $response->kids;
             
             // save comments
@@ -30,7 +30,10 @@ class HackernewsDataService
                 $comment_response = json_decode(file_get_contents($this->url."item/{$comment_id}.json"));
                 if (!is_null($comment_response)) {
                     $comment_response = (array) $comment_response;
-                    $createcomment->create($comment_response);
+                    $comment_response = array_merge($comment_response, [
+                        'source' => $source,
+                    ]);
+                    $createcomment->create($comment_response, $post_id);
                 }
             }
 
@@ -55,8 +58,10 @@ class HackernewsDataService
         return false;
     }
 
-    public function spoolFromMaxItem(CreateNewStory $createstory)
+    public function spoolFromMaxItem()
     {
+        $createstory = new CreateNewStory;
+
         $maxItemId = json_decode(file_get_contents($this->url.'maxitem.json?print=pretty'));
 
         for ($itemId = $maxItemId; $itemId > 0; $itemId--) {
@@ -71,15 +76,17 @@ class HackernewsDataService
 
                             //save story if it doesn't
                             $itemDetails = (array) $itemDetails;
+
                             $itemDetails = array_merge($itemDetails, [
                                 'category' => 'new',
                             ]);
 
-                            $createstory = $createstory->create($itemDetails);
+                            $storycreated = $createstory->create($itemDetails);
 
                             //save comments 
-                            //$this->CreateComment($itemDetails->id);
-                            if($createstory)
+                            $this->CreateComment($itemDetails['id'], 'story');
+
+                            if($storycreated)
                                 $this->successfulSpool++;
                         }
                         

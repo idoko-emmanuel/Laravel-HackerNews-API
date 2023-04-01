@@ -2,7 +2,9 @@
 
 namespace App\Actions;
 
-use App\Models\Author;
+use App\Models\Poll;
+use App\Models\Story;
+use App\Models\Comment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -15,31 +17,43 @@ class CreateNewComment
      * @param  array  $input
      * @return \App\Models\User
      */
-    public function create(array $input)
+    public function create(array $input, $id)
     {
-            Validator::make($input, [
-                'id' => ['required', 'max:255'],
-                'created' => ['required', 'integer'],
-                'karma' => ['required', 'integer'],
-                'about' => ['nullable', 'string'],
-                'submitted' => ['required'],
-            ])->validate();
+        Validator::make($input, [
+            'id' => ['required', 'max:255'],
+            'text' => ['required', 'string'],
+            'by' => ['required', 'string'],
+            'points' => ['nullable', 'integer'],
+            'parent_id' => ['nullable', 'integer'],
+            'source' => ['required', 'string'],
+        ])->validate();
 
-            $this->createauthor($input);
+            $this->createcomment($input, $id);
   
     }
 
-    protected function createauthor(array $input)
+
+    protected function createcomment(array $input, $id)
     {
-        return DB::transaction(function () use ($input) {
-            if (DB::table('authors')->where('id', $input['id'])->doesntExist()) {
-                Author::create([
+        return DB::transaction(function () use ($input, $id) {
+            if (DB::table('comments')->where('id', $input['id'])->doesntExist()) {
+                $comment = new Comment([
                     'id' => $input['id'],
-                    'created' => $input['created'],
-                    'karma' => $input['karma'],
-                    'about' => $input['about'] ?? null,
-                    'submitted' => json_encode($input['submitted']),
+                    'text' => $input['text'],
+                    'by' => $input['by'],
+                    'points' => $input['points'] ?? 0,
+                    'parent_id' => $input['parent'],
                 ]);
+                if($input['source'] === "story")
+                {
+                    $story = Story::find($id);
+                    $story->comments()->save($comment);
+
+                }elseif($type === "poll")
+                {
+                    $poll = Poll::find($id);
+                    $poll->comments()->save($comment);
+                }
             }
         });
     }

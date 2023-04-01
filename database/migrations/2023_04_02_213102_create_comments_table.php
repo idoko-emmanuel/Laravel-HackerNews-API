@@ -15,10 +15,10 @@ return new class extends Migration
             $table->integer('id')->unique();
             $table->text('text');
             $table->string('by')->unsigned();
-            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->integer('parent_id')->nullable();
             $table->integer('points')->default(0);
             $table->foreign('by')->references('id')->on('authors')->onDelete('cascade');
-            $table->foreign('parent_id')->references('id')->on('comments')->onDelete('cascade');
+            //$table->foreign('parent_id')->references('id')->on('comments')->onDelete('cascade');
             $table->Morphs('commentable');
             $table->boolean('deleted')->default(false);
             $table->boolean('dead')->default(false);

@@ -12,7 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('polls', function (Blueprint $table) {
-            $table->id();
+            $table->integer('id')->unique(); 
+            $table->integer('by')->unsigned();
+            $table->foreign('by')->references('id')->on('authors')->onDelete('cascade');
+            $table->integer('descendants');
+            $table->integer('score');
+            $table->string('title');
+            $table->text('text');
+            $table->integer('time');
             $table->timestamps();
         });
     }
