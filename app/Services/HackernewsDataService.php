@@ -19,7 +19,7 @@ class HackernewsDataService
 
     protected function CreateComment($post_id, $source) : bool
     {
-        $createcomment = new CreateNewComment;
+        
         $response = json_decode(file_get_contents($this->url."item/{$post_id}.json"));
         if (!is_null($response) && isset($response->kids)) {
             
@@ -27,14 +27,7 @@ class HackernewsDataService
             
             // save comments
             foreach ($comment_ids as $comment_id) {
-                $comment_response = json_decode(file_get_contents($this->url."item/{$comment_id}.json"));
-                if (!is_null($comment_response)) {
-                    $comment_response = (array) $comment_response;
-                    $comment_response = array_merge($comment_response, [
-                        'source' => $source,
-                    ]);
-                    $createcomment->create($comment_response, $post_id);
-                }
+                $this->newComment($comment_id, $post_id, $source);
             }
 
             return true;
@@ -44,28 +37,36 @@ class HackernewsDataService
         }
     }
 
-    protected function CreateAuthor($authorid)
+    public function newComment($comment_id, $post_id, $source)
     {
-        $createauthor = new CreateNewAuthor;
-        // Make a request to the Hacker News API
-        $response = json_decode(file_get_contents($this->url."user/{$authorid}.json"));
-        if (!is_null($response)) {
-            $response = (array) $response;
-            $createauthor->create($response);
-            return true;
+        $createcomment = new CreateNewComment;
+        $comment_response = json_decode(file_get_contents($this->url."item/{$comment_id}.json"));
+        if (!is_null($comment_response)) {
+            $comment_response = (array) $comment_response;
+            $comment_response = array_merge($comment_response, [
+                'source' => $source,
+            ]);
+            $createcomment->create($comment_response, $post_id);
         }
-
-        return false;
+        return true;
     }
 
-    public function spoolFromMaxItem()
+    public function getItemDetails($itemId)
+    {
+        return  $itemDetails = json_decode(file_get_contents($this->url."item/{$itemId}.json?print=pretty"));
+    }
+
+    public function getItemType($itemId)
+    {
+        $item = $this->getItemDetails($itemId);
+        if (!is_null($item)) 
+            return $item->type;
+    }
+
+    public function CreateStory($itemId)
     {
         $createstory = new CreateNewStory;
-
-        $maxItemId = json_decode(file_get_contents($this->url.'maxitem.json?print=pretty'));
-
-        for ($itemId = $maxItemId; $itemId > 0; $itemId--) {
-            $itemDetails = json_decode(file_get_contents($this->url."item/{$itemId}.json?print=pretty"));
+        $itemDetails = $this->getItemDetails($itemId);
 
             if (!is_null($itemDetails)) {
                 switch ($itemDetails->type) {
@@ -117,6 +118,28 @@ class HackernewsDataService
             }else {
                 return false;
             }
+    }
+
+    public function CreateAuthor($authorid)
+    {
+        $createauthor = new CreateNewAuthor;
+        // Make a request to the Hacker News API
+        $response = json_decode(file_get_contents($this->url."user/{$authorid}.json"));
+        if (!is_null($response)) {
+            $response = (array) $response;
+            $createauthor->create($response);
+            return true;
+        }
+
+        return false;
+    }
+
+    public function spoolFromMaxItem()
+    {
+        $maxItemId = json_decode(file_get_contents($this->url.'maxitem.json?print=pretty'));
+
+        for ($itemId = $maxItemId; $itemId > 0; $itemId--) {
+            $this->CreateStory($itemId);
 
             if($this->successfulSpool === self::LIMIT)
                 return true;

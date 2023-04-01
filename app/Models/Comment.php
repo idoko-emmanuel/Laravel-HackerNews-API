@@ -22,18 +22,18 @@ class Comment extends Model
         return $this->belongsTo(Author::class, 'by');
     }
 
-    public function parent()
-    {
-        return $this->belongsTo(Comment::class, 'parent_id');
-    }
-
-    public function children()
-    {
-        return $this->hasMany(Comment::class, 'parent_id');
-    }
-
-    public function orderable()
+    public function commentable()
     {
         return $this->morphTo();
+    }
+
+    public function comment()
+    {
+        return $this->morphOne(Comment::class, 'commentable');
+    }
+
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable');
     }
 }

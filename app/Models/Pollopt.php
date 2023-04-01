@@ -19,6 +19,6 @@ class Pollopt extends Model
 
     public function poll()
     {
-        return $this->belongsTo(Poll::class);
+        return $this->belongsTo(Poll::class, 'poll_id');
     }
 }
