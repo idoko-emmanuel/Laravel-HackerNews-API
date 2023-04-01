@@ -1,11 +1,28 @@
 <?php 
 namespace App\Services;
 
-class SpoolDataService 
+class HackernewsDataService 
 {
+    private $url = config('hackernews.url');
+
+    private $successfulSpool = 0;
+
     public function spoolFromMaxItem(Type $var = null)
     {
-        # code...
+        $maxItemId = json_decode(file_get_contents('https://hacker-news.firebaseio.com/v0/maxitem.json?print=pretty'));
+
+        for ($itemId = $maxItemId; $itemId > 0; $itemId--) {
+            $itemDetails = json_decode(file_get_contents("https://hacker-news.firebaseio.com/v0/item/{$itemId}.json?print=pretty"));
+
+            if ($itemDetails !== null) {
+                // Process the item details and save them to your database or do whatever you need to do with them.
+                // For example, you can create a new Story or Comment model and fill its attributes with the item details.
+
+                $this->successfulSpool++;
+            }
+            if($this->successfulSpool === 100)
+                return true;
+        }
     }
 
     public function spoolFromTopStories(Type $var = null)
