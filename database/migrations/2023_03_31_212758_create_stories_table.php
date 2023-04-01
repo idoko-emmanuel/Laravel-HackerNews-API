@@ -13,15 +13,13 @@ return new class extends Migration
     {
         Schema::create('stories', function (Blueprint $table) {
             $table->integer('id')->unique();
-            $table->string('title');
+            $table->string('title')->nullable();
             $table->text('url')->nullable();
             $table->text('text')->nullable();
             $table->integer('score')->default(0);
-            $table->integer('by')->unsigned();
-            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->string('by')->unsigned();
             $table->enum('category', ['top', 'new', 'show', 'ask', 'best']);
             $table->foreign('by')->references('id')->on('authors')->onDelete('cascade');
-            $table->foreign('parent_id')->references('id')->on('stories')->onDelete('cascade');
             $table->integer('time');
             $table->integer('descendants')->nullable();
             $table->boolean('deleted')->default(false);

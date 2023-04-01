@@ -18,7 +18,6 @@ class Story extends Model
         'text',
         'score',
         'by',
-        'parent_id',
         'type',
         'category',
         'time',
@@ -30,11 +29,6 @@ class Story extends Model
     public function author()
     {
         return $this->belongsTo(Author::class, 'by');
-    }
-
-    public function parent()
-    {
-        return $this->belongsTo(Story::class, 'parent_id');
     }
 
     public function comment()

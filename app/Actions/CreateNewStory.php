@@ -2,12 +2,12 @@
 
 namespace App\Actions;
 
+use App\Models\Story;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class CreateNewStory
 {
-
-    private $role;
 
     /**
      * Create a newly registered user.
@@ -18,36 +18,43 @@ class CreateNewStory
     public function create(array $input)
     {
             Validator::make($input, [
-                'name' => ['required', 'string', 'max:255'],
-                'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-                'password' => $this->passwordRules(),
-                'country_id' => ['required', 'max:5'],
-                'state_id' => ['required', 'max:5'],
-                'city_id' => ['nullable', 'max:5'],
-                'phone' => ['required', 'integer'],
-                'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['required', 'accepted'] : '',
+                'id' => ['required', 'max:255'],
+                'title' => ['nullable', 'max:255'],
+                'url' => ['nullable'],
+                'text' => ['nullable', 'string'],
+                'score' => ['required', 'integer'],
+                'by' => ['required', 'string'],
+                'time' => ['required', 'integer'],
+                'descendants' => ['nullable', 'integer'],
+                'deleted' => ['nullable', 'boolean'],
+                'dead' => ['nullable', 'boolean'],
+                'category' => ['required', 'string']
             ])->validate();
 
             $this->createstory($input);
   
     }
 
-    public function createauthor(array $input)
+    protected function createstory(array $input)
     {
-        $this->role = $input['role'] ?? 'user';
         return DB::transaction(function () use ($input) {
-            return tap(User::create([
-                'name' => $input['name'],
-                'email' => $input['email'],
-                'password' => Hash::make($input['password']),
-                'country_id' => $input['country_id'],
-                'state_id' => $input['state_id'],
-                'city_id' => $input['city_id'],
-                'phone' => $input['phone'],
-            ]), function (User $user) {
-                $user->assignRole($this->role);
-                $this->createTeam($user);
-            });
+            if (DB::table('stories')->where('id', $input['id'])->doesntExist()) {
+                Story::create([
+                    'id' => $input['id'],
+                    'title' => isset($input['title']) ?? null,
+                    'url' => $input['url'] ?? null,
+                    'text' => isset($input['text']) ?? null,
+                    'score' => $input['score'],
+                    'by' => $input['by'],
+                    'time' => $input['time'],
+                    'descendants' => $input['descendants'] ?? null,
+                    'deleted' => $input['deleted'] ?? false,
+                    'dead' => $input['dead'] ?? false,
+                    'category' => $input['category'],
+                ]);
+            } else {
+                return false;
+            }
         });
     }
 }

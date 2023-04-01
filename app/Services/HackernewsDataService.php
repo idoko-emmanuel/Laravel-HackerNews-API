@@ -2,6 +2,8 @@
 namespace App\Services;
 
 use CreateNewComment;
+use App\Actions\CreateNewStory;
+use App\Actions\CreateNewAuthor;
 use Illuminate\Support\Facades\Http;
 
 class HackernewsDataService 
@@ -15,18 +17,19 @@ class HackernewsDataService
         $this->successfulSpool = 0;
     }
 
-    protected function CreateComment($post_id, CreateNewComment $createcomment) : bool
+    protected function CreateComment($post_id) : bool
     {
+        $comment_response = new CreateNewComment;
         $response = json_decode(file_get_contents($this->url."item/{$post_id}.json"));
 
         if (!is_null($response)) {
-            $post = $response->json();
             $comment_ids = $response->kids;
             
             // save comments
             foreach ($comment_ids as $comment_id) {
-                $comment_response = json_decode(file_get_contents($this->url."item/{$comment_id}.json");
+                $comment_response = json_decode(file_get_contents($this->url."item/{$comment_id}.json"));
                 if (!is_null($comment_response)) {
+                    $comment_response = (array) $comment_response;
                     $createcomment->create($comment_response);
                 }
             }
@@ -38,14 +41,18 @@ class HackernewsDataService
         }
     }
 
-    protected function getAuthor($authorid)
+    protected function CreateAuthor($authorid)
     {
-        $storyId = 12345; // Replace with the ID of the story or comment
+        $createauthor = new CreateNewAuthor;
         // Make a request to the Hacker News API
-        $response = Http::get($this->url."user/{$authorid}.json");
+        $response = json_decode(file_get_contents($this->url."user/{$authorid}.json"));
+        if (!is_null($response)) {
+            $response = (array) $response;
+            $createauthor->create($response);
+            return true;
+        }
 
-        // Get the author of the story or comment
-        $author = $response['by'];
+        return false;
     }
 
     public function spoolFromMaxItem(CreateNewStory $createstory)
@@ -58,16 +65,24 @@ class HackernewsDataService
             if (!is_null($itemDetails)) {
                 switch ($itemDetails->type) {
                     case 'story':
-                        //save story if it doesn't
-                        $createstory->create($itemDetails);
-
                         //save author
-                        $this->getAuthor($itemDetails->by);
+                        if(isset($itemDetails->by)) {
+                            $this->CreateAuthor($itemDetails->by);
 
-                        //save comments 
-                        $this->CreateComment($itemDetails->id);
-                        dd($itemDetails);
-                        $this->successfulSpool++;
+                            //save story if it doesn't
+                            $itemDetails = (array) $itemDetails;
+                            $itemDetails = array_merge($itemDetails, [
+                                'category' => 'new',
+                            ]);
+
+                            $createstory = $createstory->create($itemDetails);
+
+                            //save comments 
+                            //$this->CreateComment($itemDetails->id);
+                            if($createstory)
+                                $this->successfulSpool++;
+                        }
+                        
                         break;
 
                     case 'poll':

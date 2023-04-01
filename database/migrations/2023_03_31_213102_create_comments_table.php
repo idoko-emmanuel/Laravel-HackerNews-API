@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->integer('id')->unique();
             $table->text('text');
+            $table->string('by')->unsigned();
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->integer('points')->default(0);
             $table->foreign('by')->references('id')->on('authors')->onDelete('cascade');

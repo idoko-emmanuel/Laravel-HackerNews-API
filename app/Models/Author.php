@@ -11,8 +11,6 @@ class Author extends Model
 
     protected $primaryKey = 'id';
 
-    protected $keyType = 'string';
-
     protected $fillable = [
         'id',
         'created',
