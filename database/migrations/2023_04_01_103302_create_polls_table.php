@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('title');
             $table->text('text');
             $table->integer('time');
+            $table->boolean('deleted')->default(false);
+            $table->boolean('dead')->default(false);
             $table->timestamps();
         });
     }

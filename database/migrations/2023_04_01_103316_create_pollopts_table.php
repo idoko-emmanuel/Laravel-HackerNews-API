@@ -19,8 +19,9 @@ return new class extends Migration
             $table->integer('score');
             $table->text('text');
             $table->integer('time');
+            $table->boolean('deleted')->default(false);
+            $table->boolean('dead')->default(false);
             $table->timestamps();
-
             $table->foreign('poll_id')->references('id')->on('polls');
         });
     }

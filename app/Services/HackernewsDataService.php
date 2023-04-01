@@ -37,7 +37,7 @@ class HackernewsDataService
         }
     }
 
-    public function newComment($comment_id, $post_id, $source)
+    public function newComment($comment_id, $post_id, $source) : bool
     {
         $createcomment = new CreateNewComment;
         $comment_response = json_decode(file_get_contents($this->url."item/{$comment_id}.json"));
@@ -51,7 +51,7 @@ class HackernewsDataService
         return true;
     }
 
-    public function getItemDetails($itemId)
+    public function getItemDetails($itemId) : mixed
     {
         return  $itemDetails = json_decode(file_get_contents($this->url."item/{$itemId}.json?print=pretty"));
     }
@@ -63,64 +63,7 @@ class HackernewsDataService
             return $item->type;
     }
 
-    public function CreateStory($itemId)
-    {
-        $createstory = new CreateNewStory;
-        $itemDetails = $this->getItemDetails($itemId);
-
-            if (!is_null($itemDetails)) {
-                switch ($itemDetails->type) {
-                    case 'story':
-                        //save author
-                        if(isset($itemDetails->by)) {
-                            $this->CreateAuthor($itemDetails->by);
-
-                            //save story if it doesn't
-                            $itemDetails = (array) $itemDetails;
-
-                            $itemDetails = array_merge($itemDetails, [
-                                'category' => 'new',
-                            ]);
-
-                            $storycreated = $createstory->create($itemDetails);
-
-                            //save comments 
-                            $this->CreateComment($itemDetails['id'], 'story');
-
-                            if($storycreated)
-                                $this->successfulSpool++;
-                        }
-                        
-                        break;
-
-                    case 'poll':
-                        //save poll if not already saved
-                        //save author if not already saved
-                        //save poll options if not already saved
-                        //save comments if not already saved
-                        dd($itemDetails);
-                        break;
-
-                    case 'job':
-                        //save job if not already saved
-                        //save author if not already saved
-                        dd($itemDetails);
-                        break;
-                    
-                    default:
-                        # code...
-                        break;
-                }
-                // Process the item details and save them to your database or do whatever you need to do with them.
-                // For example, you can create a new Story or Comment model and fill its attributes with the item details.
-
-               
-            }else {
-                return false;
-            }
-    }
-
-    public function CreateAuthor($authorid)
+    public function CreateAuthor($authorid) : bool
     {
         $createauthor = new CreateNewAuthor;
         // Make a request to the Hacker News API
@@ -132,6 +75,83 @@ class HackernewsDataService
         }
 
         return false;
+    }
+
+    public function CreateStory($itemId, $category = 'new')
+    {
+        $itemDetails = $this->getItemDetails($itemId);
+
+            if (!is_null($itemDetails)) {
+                switch ($itemDetails->type) {
+                    case 'story':
+                        $createstory = new CreateNewStory;
+                        if(isset($itemDetails->by)) {
+                            //create author
+                            $this->CreateAuthor($itemDetails->by);
+
+                            //create story if it doesn't
+                            $itemDetails = (array) $itemDetails;
+
+                            $itemDetails = array_merge($itemDetails, [
+                                'category' => $category,
+                            ]);
+
+                            $storycreated = $createstory->create($itemDetails);
+
+                            //create comments 
+                            $this->CreateComment($itemDetails['id'], 'story');
+
+                            if($storycreated)
+                                $this->successfulSpool++;
+                        }
+                        
+                        break;
+
+                    case 'poll':
+                        if(isset($itemDetails->by)) {
+                            $createpoll = new CreateNewPoll;
+                            //create author
+                            $this->CreateAuthor($itemDetails->by);
+
+                            //create poll if it doesn't
+                            $itemDetails = (array) $itemDetails;
+
+                            $pollcreated = $createpoll->create($itemDetails);
+
+                            //create poll option
+                            $this->CreatePollOption($itemDetails['id'], 'poll');
+
+                            //create comments 
+                            $this->CreateComment($itemDetails['id'], 'poll');
+
+                            if($pollcreated)
+                                $this->successfulSpool++;
+                        }
+                        break;
+
+                    case 'job':
+                        if(isset($itemDetails->by)) {
+                            $createjob = new CreateNewJob;
+                            //create author
+                            $this->CreateAuthor($itemDetails->by);
+
+                            //create job 
+                            $jobcreated = $createjob->create($itemDetails);
+
+                            if($jobcreated)
+                                $this->successfulSpool++;
+                        }
+                        break;
+                    
+                    default:
+                        # code...
+                        break;
+                }
+
+               
+            }else {
+                return false;
+            }
     }
 
     public function spoolFromMaxItem()
