@@ -1,10 +1,12 @@
 <?php 
 namespace App\Services;
 
+use App\Actions\CreateNewJob;
+use App\Actions\CreateNewPoll;
 use App\Actions\CreateNewStory;
 use App\Actions\CreateNewAuthor;
 use App\Actions\CreateNewComment;
-use Illuminate\Support\Facades\Http;
+use App\Actions\CreateNewPollopt;
 
 class HackernewsDataService 
 {
@@ -20,7 +22,7 @@ class HackernewsDataService
     protected function CreateComment($post_id, $source) : bool
     {
         
-        $response = json_decode(file_get_contents($this->url."item/{$post_id}.json"));
+        $response = $this->getItemDetails($post_id);
         if (!is_null($response) && isset($response->kids)) {
             
             $comment_ids = $response->kids;
@@ -37,10 +39,39 @@ class HackernewsDataService
         }
     }
 
-    public function newComment($comment_id, $post_id, $source) : bool
+    protected function CreatePollopt($post_id) : bool
+    {
+        $createoption = new CreateNewPollopt;
+        $response = $this->getItemDetails($post_id);
+        if (!is_null($response) && isset($response->parts)) {
+            
+            $options_ids = $response->parts;
+            
+            // save comments
+            foreach ($options_ids as $option_id) {
+                $option_response = $this->getItemDetails($comment_id);
+                if (!is_null($option_response)) {
+                    $option_response = (array) $comment_response;
+                    $createoption->create($option_response, $post_id);
+                }
+            }
+
+            return true;
+
+        } else {
+            return false;
+        }
+    }
+
+    protected function getItemDetails($itemId) : mixed
+    {
+        return  $itemDetails = json_decode(file_get_contents($this->url."item/{$itemId}.json?print=pretty"));
+    }
+
+    protected function newComment($comment_id, $post_id, $source) : bool
     {
         $createcomment = new CreateNewComment;
-        $comment_response = json_decode(file_get_contents($this->url."item/{$comment_id}.json"));
+        $comment_response = $this->getItemDetails($comment_id);
         if (!is_null($comment_response)) {
             $comment_response = (array) $comment_response;
             $comment_response = array_merge($comment_response, [
@@ -51,17 +82,13 @@ class HackernewsDataService
         return true;
     }
 
-    public function getItemDetails($itemId) : mixed
-    {
-        return  $itemDetails = json_decode(file_get_contents($this->url."item/{$itemId}.json?print=pretty"));
-    }
-
     public function getItemType($itemId)
     {
         $item = $this->getItemDetails($itemId);
         if (!is_null($item)) 
             return $item->type;
     }
+
 
     public function CreateAuthor($authorid) : bool
     {
@@ -119,7 +146,7 @@ class HackernewsDataService
                             $pollcreated = $createpoll->create($itemDetails);
 
                             //create poll option
-                            $this->CreatePollOption($itemDetails['id'], 'poll');
+                            $this->CreatePollopt($itemDetails['id']);
 
                             //create comments 
                             $this->CreateComment($itemDetails['id'], 'poll');
@@ -166,126 +193,76 @@ class HackernewsDataService
         }
     }
 
-    public function spoolFromTopStories(Type $var = null)
+    public function spoolFromTopStories()
     {
-        $response = Http::get($this->url.'topstories.json');
-        $topStoryIds = $response->json();
+        $topStoryIds = json_decode(file_get_contents($this->url.'topstories.json'));
 
-        $topStories = [];
         foreach ($topStoryIds as $storyId) {
-            $response = Http::get($this->url."item/$storyId.json");
-            $story = $response->json();
-            if ($story && isset($story['title'], $story['url'])) {
-                $topStories[] = [
-                    'title' => $story['title'],
-                    'url' => $story['url'],
-                ];
-            }
+            $this->CreateStory($storyId);
+
+            if($this->successfulSpool === self::LIMIT)
+                return true;
         }
     }
 
-    public function spoolFromNewStories(Type $var = null)
+    public function spoolFromNewStories()
     {
-        $url = $this->url.'newstories.json';
-        $response = file_get_contents($url);
-        $stories = json_decode($response);
+        $stories = json_decode(file_get_contents($this->url.'newstories.json'));
 
         foreach ($stories as $storyId) {
-            $url = $this->url."item/$storyId.json";
-            $response = file_get_contents($url);
-            $story = json_decode($response);
+            $this->CreateStory($storyId);
 
-            // echo "<h2>{$story->title}</h2>";
-            // echo "<p>by {$story->by} | {$story->time}</p>";
-            // echo "<p>{$story->score} points</p>";
-            // echo "<a href='{$story->url}'>{$story->url}</a>";
+            if($this->successfulSpool === self::LIMIT)
+                return true;
         }
     }
 
-    public function spoolFromShowStories(Type $var = null)
+    public function spoolFromShowStories()
     {
-        // Fetch Show HN stories
-        $response = Http::get($this->url.'showstories.json');
-        $showHnIds = $response->json();
+        $stories = json_decode(file_get_contents($this->url.'showstories.json'));
 
-        // Get the latest 10 Show HN stories
-        $showHnStories = [];
-        foreach (array_slice($showHnIds, 0, 10) as $storyId) {
-            $response = Http::get($this->url."item/{$storyId}.json");
-            $story = $response->json();
-            if (isset($story['title'], $story['url'])) {
-                $showHnStories[] = [
-                    'title' => $story['title'],
-                    'url' => $story['url'],
-                ];
-            }
-        }
+        foreach ($stories as $storyId) {
+            $this->CreateStory($storyId, 'show');
 
-        // Print the latest Show HN stories
-        foreach ($showHnStories as $story) {
-            echo "<a href=\"{$story['url']}\">{$story['title']}</a><br>\n";
+            if($this->successfulSpool === self::LIMIT)
+                return true;
         }
     }
 
     public function spoolFromAskStories(Type $var = null)
     {
-        $askStories = Http::get($this->url.'askstories.json')->json();
+        $stories = json_decode(file_get_contents($this->url.'askstories.json'));
 
-        $latestAskStories = array_slice(array_reverse($askStories), 0, 10);
+        foreach ($stories as $storyId) {
+            $this->CreateStory($storyId, 'ask');
 
-        foreach ($latestAskStories as $storyId) {
-            $story = Http::get($this->url.'item/'.$storyId.'.json')->json();
-            echo $story['title']."\n";
-            echo "By: ".$story['by']."\n";
-            echo "Score: ".$story['score']."\n";
-            echo "Url: ".$story['url']."\n";
+            if($this->successfulSpool === self::LIMIT)
+                return true;
         }
     }
 
     public function spoolFromJobs()
     {
-        $url = $this->url.'jobstories.json';
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', $url);
-        $jobIds = json_decode($response->getBody(), true);
+        $stories = json_decode(file_get_contents($this->url.'jobstories.json'));
 
-        $jobs = [];
+        foreach ($stories as $storyId) {
+            $this->CreateStory($storyId, 'job');
 
-        foreach ($jobIds as $jobId) {
-            $jobUrl = $this->url."item/{$jobId}.json";
-            $jobResponse = $client->request('GET', $jobUrl);
-            $job = json_decode($jobResponse->getBody(), true);
-
-            if ($job && isset($job['title']) && isset($job['url'])) {
-                $jobs[] = [
-                    'title' => $job['title'],
-                    'url' => $job['url'],
-                    'author' => isset($job['by']) ? $job['by'] : '',
-                    'created_at' => isset($job['time']) ? date('Y-m-d H:i:s', $job['time']) : '',
-                    'points' => isset($job['score']) ? $job['score'] : 0,
-                    'comments_count' => isset($job['descendants']) ? $job['descendants'] : 0
-                ];
-            }
+            if($this->successfulSpool === self::LIMIT)
+                return true;
         }
-
-        return view('jobs', ['jobs' => $jobs]);
     }
 
     public function spoolFromBestStories(Type $var = null)
     {
-        $bestStories = file_get_contents($this->url.'beststories.json');
-        $bestStories = array_slice(json_decode($bestStories), 0, 10);
+        $stories = json_decode(file_get_contents($this->url.'beststories.json'));
 
-        $stories = [];
-        foreach ($bestStories as $storyId) {
-            $story = file_get_contents($this->url.'item/' . $storyId . '.json');
-            $story = json_decode($story);
-            if ($story->type === 'story') {
-                $stories[] = $story;
-            }
+        foreach ($stories as $storyId) {
+            $this->CreateStory($storyId, 'best');
+
+            if($this->successfulSpool === self::LIMIT)
+                return true;
         }
-
-        return view('best', ['stories' => $stories]);
 
     }
 
