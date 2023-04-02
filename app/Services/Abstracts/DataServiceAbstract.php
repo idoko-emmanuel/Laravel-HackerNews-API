@@ -13,6 +13,12 @@ abstract class DataServiceAbstract
 
     abstract protected function newComment(int $comment_id, int $post_id, string $source) : bool;
 
+    abstract protected function story($itemDetails, $category) : mixed;
+
+    abstract protected function poll($itemDetails) : mixed;
+
+    abstract protected function job($itemDetails) : mixed;
+
     abstract public function getItemType(int $itemId):string;
 
     abstract public function CreateAuthor(string $authorid) : bool;

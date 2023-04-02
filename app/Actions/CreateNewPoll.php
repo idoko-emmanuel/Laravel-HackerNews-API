@@ -29,29 +29,28 @@ class CreateNewPoll
                 'dead' => ['nullable', 'boolean']
             ])->validate();
 
-            $this->createpoll($input);
+            return $this->createpoll($input);
   
     }
 
     protected function createpoll(array $input)
     {
-        return DB::transaction(function () use ($input) {
-            if (DB::table('polls')->where('id', $input['id'])->doesntExist()) {
-                Poll::create([
-                    'id' => $input['id'],
-                    'by' => isset($input['by']) ?? null,
-                    'descendants' => $input['descendants'] ?? null,
-                    'score' => $input['score'],
-                    'title' => $input['title'],
-                    'text' => isset($input['text']) ?? null,
-                    'by' => $input['by'],
-                    'time' => $input['time'],
-                    'deleted' => $input['deleted'] ?? false,
-                    'dead' => $input['dead'] ?? false,
-                ]);
-            } else {
-                return false;
-            }
-        });
+        if (DB::table('polls')->where('id', $input['id'])->doesntExist()) {
+            Poll::create([
+                'id' => $input['id'],
+                'by' => isset($input['by']) ?? null,
+                'descendants' => $input['descendants'] ?? null,
+                'score' => $input['score'],
+                'title' => $input['title'],
+                'text' => isset($input['text']) ?? null,
+                'by' => $input['by'],
+                'time' => $input['time'],
+                'deleted' => $input['deleted'] ?? false,
+                'dead' => $input['dead'] ?? false,
+            ]);
+            return true;
+        } 
+
+        return false;
     }
 }

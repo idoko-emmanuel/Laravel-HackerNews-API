@@ -27,30 +27,28 @@ class CreateNewJob
                 'url' => ['nullable'],
                 'deleted' => ['nullable', 'boolean'],
                 'dead' => ['nullable', 'boolean'],
-                'category' => ['required', 'string'] 
             ])->validate();
 
-            $this->createjob($input);
+            return $this->createjob($input);
   
     }
 
     protected function createjob(array $input)
     {
-        return DB::transaction(function () use ($input) {
-            if (DB::table('hacker_jobs')->where('id', $input['id'])->doesntExist()) {
-                HackerJob::create([
-                    'id' => $input['id'],
-                    'by' => $input['by'],
-                    'score' => $input['score'],
-                    'text' => isset($input['text']) ?? null,
-                    'time' => $input['time'],
-                    'title' => isset($input['title']) ?? null,
-                    'url' => $input['url'] ?? null,
-                    'deleted' => $input['deleted'] ?? false,
-                    'dead' => $input['dead'] ?? false,
-                    'category' => $input['category'],
-                ]);
-            } 
-        });
+        if (DB::table('hacker_jobs')->where('id', $input['id'])->doesntExist()) {
+            HackerJob::create([
+                'id' => $input['id'],
+                'by' => $input['by'],
+                'score' => $input['score'],
+                'text' => isset($input['text']) ?? null,
+                'time' => $input['time'],
+                'title' => isset($input['title']) ?? null,
+                'url' => $input['url'] ?? null,
+                'deleted' => $input['deleted'] ?? false,
+                'dead' => $input['dead'] ?? false,
+            ]);
+            return true;
+        }
+        return false;
     }
 }

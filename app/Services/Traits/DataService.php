@@ -38,12 +38,14 @@ trait DataService
             
             $options_ids = $response->parts;
             
-            // save comments
+            // save polls
             foreach ($options_ids as $option_id) {
                 $option_response = $this->getItemDetails($comment_id);
                 if (!is_null($option_response)) {
                     $option_response = (array) $comment_response;
-                    $createoption->create($option_response, $post_id);
+                    //create poll option if author is available
+                    if(isset($option_response['by']))
+                        $createoption->create($option_response, $post_id);
                 }
             }
 
@@ -68,8 +70,79 @@ trait DataService
             $comment_response = array_merge($comment_response, [
                 'source' => $source,
             ]);
-            $createcomment->create($comment_response, $post_id);
+            //create comment if author is available
+            if(isset($comment_response['by']))
+                $createcomment->createnew($comment_response, $post_id);
         }
+        return true;
+    }
+
+    protected function story($itemDetails, $category) : mixed
+    {
+        $createstory = new CreateNewStory;
+        //create author, story and comment if author is available
+        if(isset($itemDetails->by)) {
+            if($this->successfulSpool === self::LIMIT)
+                return true;
+            //create author
+            $this->CreateAuthor($itemDetails->by);
+
+            //create story if it doesn't
+            $itemDetails = (array) $itemDetails;
+
+            $itemDetails = array_merge($itemDetails, [
+                'category' => $category,
+            ]);
+
+            if($createstory->create($itemDetails))
+                $this->successfulSpool++;
+
+            //create comments 
+            $this->CreateComment($itemDetails['id'], 'story');
+        }
+
+        return true;
+    }
+
+    protected function poll($itemDetails) : mixed
+    {
+        $createpoll = new CreateNewPoll;
+        if(isset($itemDetails->by)) {
+            if($this->successfulSpool === self::LIMIT)
+                return true;
+            //create author
+            $this->CreateAuthor($itemDetails->by);
+
+            //create poll if it doesn't
+            $itemDetails = (array) $itemDetails;
+
+            if($createpoll->create($itemDetails))
+                $this->successfulSpool++;
+
+            //create poll option
+            $this->CreatePollopt($itemDetails['id']);
+
+            //create comments 
+            $this->CreateComment($itemDetails['id'], 'poll');
+        }
+        return true;
+    }
+
+    protected function job($itemDetails) : mixed
+    {
+        $createjob = new CreateNewJob;
+        if(isset($itemDetails->by)) {
+            if($this->successfulSpool === self::LIMIT)
+                return true;
+            //create author
+            $this->CreateAuthor($itemDetails->by);
+
+            //create job 
+            $itemDetails = (array) $itemDetails;
+            $createjob->create($itemDetails);
+
+        }
+
         return true;
     }
 
@@ -98,75 +171,13 @@ trait DataService
     public function CreateStory($itemId, $category = 'new'): bool
     {
         $itemDetails = $this->getItemDetails($itemId);
-
         if (!is_null($itemDetails)) {
-            switch ($itemDetails->type) {
-                case 'story':
-                    $createstory = new CreateNewStory;
-                    if(isset($itemDetails->by)) {
-                        //create author
-                        $this->CreateAuthor($itemDetails->by);
-
-                        //create story if it doesn't
-                        $itemDetails = (array) $itemDetails;
-
-                        $itemDetails = array_merge($itemDetails, [
-                            'category' => $category,
-                        ]);
-
-                        $storycreated = $createstory->create($itemDetails);
-
-                        //create comments 
-                        $this->CreateComment($itemDetails['id'], 'story');
-
-                        if($storycreated)
-                            $this->successfulSpool++;
-                    }
-                    
-                    break;
-
-                case 'poll':
-                    if(isset($itemDetails->by)) {
-                        $createpoll = new CreateNewPoll;
-                        //create author
-                        $this->CreateAuthor($itemDetails->by);
-
-                        //create poll if it doesn't
-                        $itemDetails = (array) $itemDetails;
-
-                        $pollcreated = $createpoll->create($itemDetails);
-
-                        //create poll option
-                        $this->CreatePollopt($itemDetails['id']);
-
-                        //create comments 
-                        $this->CreateComment($itemDetails['id'], 'poll');
-
-                        if($pollcreated)
-                            $this->successfulSpool++;
-                    }
-                    break;
-
-                case 'job':
-                    if(isset($itemDetails->by)) {
-                        $createjob = new CreateNewJob;
-                        //create author
-                        $this->CreateAuthor($itemDetails->by);
-
-                        //create job 
-                        $jobcreated = $createjob->create($itemDetails);
-
-                        if($jobcreated)
-                            $this->successfulSpool++;
-                    }
-                    break;
-                
-                default:
-                    # code...
-                    break;
-            }
-
-            
+            match ($itemDetails->type) {
+                'story' => $this->story($itemDetails, $category),
+                'poll' => $this->poll($itemDetails),
+                'job' => $this->job($itemDetails),
+                'comment' => $this->CreateComment($itemDetails->id, 'comment'),
+            };   
         }else {
             return false;
         }

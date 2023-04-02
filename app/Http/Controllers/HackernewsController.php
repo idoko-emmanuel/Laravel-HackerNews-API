@@ -8,6 +8,6 @@ class HackernewsController extends Controller
 {
     public function test(HackernewsDataService $service)
     {
-        $service->spoolFromMaxItem();
+        return $service->spoolFromMaxItem();
     }
 }

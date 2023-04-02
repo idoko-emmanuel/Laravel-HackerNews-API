@@ -8,13 +8,15 @@ class HackernewsDataService extends DataServiceAbstract
 {
     use DataService;
     
-    const LIMIT = 100;
-    private $url, $successfulSpool;
+    const LIMIT = 10;
+    private $url, $successfulSpool, $message;//, $limit;
 
     public function __construct()
     {
         $this->url = config('hackernews.url');
         $this->successfulSpool = 0;
+        $this->message = $this->successfulSpool.": Data spooled successfully";;
+        //$this->limit = config('hackernews.limit');
     }
 
     public function spoolFromMaxItem():mixed
@@ -25,8 +27,9 @@ class HackernewsDataService extends DataServiceAbstract
             $this->CreateStory($itemId);
 
             if($this->successfulSpool === self::LIMIT)
-                return true;
+                return $this->message;
         }
+        return $this->message;
     }
 
     public function spoolFromTopStories():mixed
@@ -37,8 +40,9 @@ class HackernewsDataService extends DataServiceAbstract
             $this->CreateStory($storyId);
 
             if($this->successfulSpool === self::LIMIT)
-                return true;
+                return $this->message;
         }
+        return $this->message;
     }
 
     public function spoolFromNewStories():mixed
@@ -49,8 +53,9 @@ class HackernewsDataService extends DataServiceAbstract
             $this->CreateStory($storyId);
 
             if($this->successfulSpool === self::LIMIT)
-                return true;
+                return $this->message;
         }
+        return $this->message;
     }
 
     public function spoolFromShowStories():mixed
@@ -61,8 +66,9 @@ class HackernewsDataService extends DataServiceAbstract
             $this->CreateStory($storyId, 'show');
 
             if($this->successfulSpool === self::LIMIT)
-                return true;
+                return $this->message;
         }
+        return $this->message;
     }
 
     public function spoolFromAskStories():mixed
@@ -73,8 +79,9 @@ class HackernewsDataService extends DataServiceAbstract
             $this->CreateStory($storyId, 'ask');
 
             if($this->successfulSpool === self::LIMIT)
-                return true;
+                return $this->message;
         }
+        return $this->message;
     }
 
     public function spoolFromJobs():mixed
@@ -85,8 +92,9 @@ class HackernewsDataService extends DataServiceAbstract
             $this->CreateStory($storyId, 'job');
 
             if($this->successfulSpool === self::LIMIT)
-                return true;
+                return $this->message;
         }
+        return $this->message;
     }
 
     public function spoolFromBestStories():mixed
@@ -97,8 +105,10 @@ class HackernewsDataService extends DataServiceAbstract
             $this->CreateStory($storyId, 'best');
 
             if($this->successfulSpool === self::LIMIT)
-                return true;
+                return $this->message;return true;
         }
+
+        return $this->message;
 
     }
 

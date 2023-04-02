@@ -29,11 +29,11 @@ class Comment extends Model
 
     public function comment()
     {
-        return $this->morphOne(Comment::class, 'commentable');
+        return $this->morphOne(self::class, 'commentable');
     }
 
     public function comments()
     {
-        return $this->morphMany(Comment::class, 'commentable');
+        return $this->morphMany(self::class, 'commentable');
     }
 }
