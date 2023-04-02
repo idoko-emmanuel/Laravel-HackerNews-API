@@ -8,6 +8,7 @@ use App\Models\Author;
 use App\Actions\CreateNewStory;
 use App\Actions\CreateNewAuthor;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CreateNewStoryTest extends TestCase
@@ -78,5 +79,27 @@ class CreateNewStoryTest extends TestCase
        $this->assertFalse($result);
        $this->assertDatabaseCount('stories', 1);
        $this->assertEquals(1, DB::table('stories')->count()); // should still only have 1 row in the table
+   }
+
+   /** @test */
+   public function it_throws_validation_exception_for_invalid_input()
+   {
+        $input = [
+            'title' => 'Test Title',
+            'url' => 'https://example.com',
+            'text' => null,
+            'score' => 10,
+            'by' => 'John',
+            'time' => time(),
+            'descendants' => null,
+            'deleted' => false,
+            'dead' => false,
+            'category' => 'new'
+        ];
+
+       $action = new CreateNewStory;
+
+       $this->expectException(ValidationException::class);
+       $action->create($input);
    }
 }

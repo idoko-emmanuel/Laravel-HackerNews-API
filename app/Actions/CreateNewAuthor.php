@@ -25,22 +25,23 @@ class CreateNewAuthor
                 'submitted' => ['nullable'],
             ])->validate();
 
-            $this->createauthor($input);
+            return $this->createauthor($input);
   
     }
 
     protected function createauthor(array $input)
     {
-        return DB::transaction(function () use ($input) {
-            if (DB::table('authors')->where('id', $input['id'])->doesntExist()) {
-                Author::create([
-                    'id' => $input['id'],
-                    'created' => $input['created'],
-                    'karma' => $input['karma'],
-                    'about' => $input['about'] ?? null,
-                    'submitted' => json_encode($input['submitted'] ?? null),
-                ]);
-            }
-        });
+        if (DB::table('authors')->where('id', $input['id'])->doesntExist()) {
+            Author::create([
+                'id' => $input['id'],
+                'created' => $input['created'],
+                'karma' => $input['karma'],
+                'about' => $input['about'] ?? null,
+                'submitted' => json_encode($input['submitted'] ?? null),
+            ]);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

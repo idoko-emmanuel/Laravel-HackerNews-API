@@ -6,6 +6,7 @@ use App\Models\Author;
 use App\Actions\CreateNewAuthor;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CreateNewAuthorTest extends TestCase
@@ -41,13 +42,28 @@ class CreateNewAuthorTest extends TestCase
         ];
 
         $action = new CreateNewAuthor();
-        $action->create($author);
 
         // Try to create the story again
-       $result = $action->create($author);
+        $result = $action->create($author);
 
-       $this->assertNull($result);
-       $this->assertDatabaseCount('authors', 1);
-       $this->assertEquals(1, DB::table('authors')->count());
+        $this->assertFalse($result);
+        $this->assertDatabaseCount('authors', 1);
+        $this->assertEquals(1, DB::table('authors')->count());
+    }
+
+    /** @test */
+    public function it_throws_validation_exception_for_invalid_input()
+    {
+        $input = [
+            'created' => 12333223,
+            'karma' => 12343,
+            'about' => 'test paragraph',
+            'submitted' => ['1234', '5678'],
+        ];
+
+        $action = new CreateNewAuthor;
+
+        $this->expectException(ValidationException::class);
+        $action->create($input);
     }
 }
