@@ -28,6 +28,6 @@ class FetchData extends Command
     {
         dispatch(new FetchHackernewsData());
 
-        dd('Data fetched successfully');
+        $this->info('The command was successful!');
     }
 }

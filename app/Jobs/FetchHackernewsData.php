@@ -31,6 +31,14 @@ class FetchHackernewsData implements ShouldQueue
      */
     public function handle(HackernewsDataService $fetchData): void
     {
-        $fetchData->spoolFromMaxItem();
+        match (config('hackernews.spooltype')) {
+            'max' => $fetchData->spoolFromMaxItem(),
+            'top' => $fetchData->spoolFromTopStories(),
+            'new' => $fetchData->spoolFromNewStories(),
+            'show' => $fetchData->spoolFromShowStories(),
+            'ask' => $fetchData->spoolFromAskStories(),
+            'job' => $fetchData->spoolFromJobs(),
+            'best' => $fetchData->spoolFromBestStories(),
+        }; 
     }
 }
