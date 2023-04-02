@@ -2,48 +2,71 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\HackernewsDataService;
+use App\Services\Facades\HackernewsData;
 
 class HackernewsController extends Controller
 {
-    private $service;
-
-    public function __construct()
-    {
-        $this->service = new HackernewsDataService;
-    }
+    
     public function spoolmax()
     {
-        return $this->service->spoolFromMaxItem();
+        $response = HackernewsData::spoolFromMaxItem();
+
+        return response()->json([
+            "message" => $response." from maximum item.",
+        ], 200);
     }
 
     public function spooltop()
     {
-        return $this->service->spoolFromTopStories();
+        $response = HackernewsData::spoolFromTopStories();
+
+        return response()->json([
+            "message" => $response." from top stories.",
+        ], 200);
     }
 
     public function spoolnew()
     {
-        return $this->service->spoolFromNewStories();
+        $response = HackernewsData::spoolFromNewStories();
+
+        return response()->json([
+            "message" => $response." from new stories.",
+        ], 200);
     }
 
     public function spoolshow()
     {
-        return $this->service->spoolFromShowStories();
+        $response = HackernewsData::spoolFromShowStories();
+
+        return response()->json([
+            "message" => $response." from show stories.",
+        ], 200);
     }
 
     public function spoolask()
     {
-        return $this->service->spoolFromAskStories();
+        $response = HackernewsData::spoolFromAskStories();
+
+        return response()->json([
+            "message" => $response." from ask stories.",
+        ], 200);
     }
 
     public function spooljob()
     {
-        return $this->service->spoolFromJobs();
+        $response = HackernewsData::spoolFromJobs();
+
+        return response()->json([
+            "message" => $response." from jobs.",
+        ], 200);
     }
 
     public function spoolbest()
     {
-        return $this->service->spoolFromBestStories();
+        $response = HackernewsData::spoolFromBestStories();
+
+        return response()->json([
+            "message" => $response." from best stories.",
+        ], 200);
     }
 }

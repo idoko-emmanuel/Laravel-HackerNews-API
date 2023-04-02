@@ -15,7 +15,7 @@ class HackernewsDataService extends DataServiceAbstract
     {
         $this->url = config('hackernews.url');
         $this->successfulSpool = 0;
-        $this->message = ": stories spooled successfully";;
+        $this->message = ": stories spooled successfully";
         //$this->limit = config('hackernews.limit');
     }
 
@@ -108,7 +108,7 @@ class HackernewsDataService extends DataServiceAbstract
                 return  $this->successfulSpool.''.$this->message;
         }
 
-        return  $this->successfulSpool.''.$this->message;;
+        return  $this->successfulSpool.''.$this->message;
 
     }
 
