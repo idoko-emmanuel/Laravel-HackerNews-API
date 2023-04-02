@@ -21,12 +21,9 @@ class FetchHackernewsData implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(
-        public Story $story, 
-        public Author $author, 
-        public Comment $comment,) 
+    public function __construct() 
     {
-
+        //
     }
 
     /**
