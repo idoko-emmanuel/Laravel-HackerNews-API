@@ -23,7 +23,7 @@ class CreateNewPollopt
                 'poll_id' => ['required', 'integer'],
                 'score' => ['required', 'integer'],
                 'text' => ['nullable', 'string'],
-                'time' => ['required', 'integer'],
+                'time' => ['nullable', 'integer'],
                 'deleted' => ['nullable', 'boolean'],
                 'dead' => ['nullable', 'boolean'],
                 'category' => ['required', 'string']
@@ -43,7 +43,7 @@ class CreateNewPollopt
                     'poll_id' => $id,
                     'score' => $input['score'],
                     'text' => isset($input['text']) ?? null,
-                    'time' => $input['time'],
+                    'time' => $input['time'] ?? null,
                     'deleted' => $input['deleted'] ?? false,
                     'dead' => $input['dead'] ?? false,
                     'category' => $input['category'],

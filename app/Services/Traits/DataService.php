@@ -131,7 +131,7 @@ trait DataService
     protected function job($itemDetails) : mixed
     {
         $createjob = new CreateNewJob;
-        if(isset($itemDetails->by)) {
+        if(isset($itemDetails->by) && isset($itemDetails->id)) {
             if($this->successfulSpool === self::LIMIT)
                 return true;
             //create author
@@ -139,7 +139,9 @@ trait DataService
 
             //create job 
             $itemDetails = (array) $itemDetails;
-            $createjob->create($itemDetails);
+            
+            if($createjob->create($itemDetails))
+                $this->successfulSpool++;
 
         }
 

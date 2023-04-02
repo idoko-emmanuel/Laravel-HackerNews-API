@@ -8,6 +8,7 @@ use App\Models\Comment;
 use Illuminate\Bus\Queueable;
 use App\Jobs\FetchHackernewsData;
 use Illuminate\Queue\SerializesModels;
+use App\Services\HackernewsDataService;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -31,8 +32,8 @@ class FetchHackernewsData implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(FetchHackernewsData $fetchData): void
+    public function handle(HackernewsDataService $fetchData): void
     {
-        //
+        $fetchData->spoolFromMaxItem();
     }
 }

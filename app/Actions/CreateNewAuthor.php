@@ -22,7 +22,7 @@ class CreateNewAuthor
                 'created' => ['required', 'integer'],
                 'karma' => ['required', 'integer'],
                 'about' => ['nullable', 'string'],
-                'submitted' => ['required'],
+                'submitted' => ['nullable'],
             ])->validate();
 
             $this->createauthor($input);
@@ -38,7 +38,7 @@ class CreateNewAuthor
                     'created' => $input['created'],
                     'karma' => $input['karma'],
                     'about' => $input['about'] ?? null,
-                    'submitted' => json_encode($input['submitted']),
+                    'submitted' => json_encode($input['submitted'] ?? null),
                 ]);
             }
         });

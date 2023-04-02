@@ -21,10 +21,10 @@ class CreateNewPoll
                 'id' => ['required', 'max:255'],
                 'by' => ['required', 'string'],
                 'descendants' => ['nullable', 'integer'],
-                'score' => ['required', 'integer'],
+                'score' => ['nullable', 'integer'],
                 'title' => ['nullable', 'max:255'],
                 'text' => ['nullable', 'string'],
-                'time' => ['required', 'integer'],
+                'time' => ['nullable', 'integer'],
                 'deleted' => ['nullable', 'boolean'],
                 'dead' => ['nullable', 'boolean']
             ])->validate();
@@ -38,13 +38,12 @@ class CreateNewPoll
         if (DB::table('polls')->where('id', $input['id'])->doesntExist()) {
             Poll::create([
                 'id' => $input['id'],
-                'by' => isset($input['by']) ?? null,
+                'by' => isset($input['by']),
                 'descendants' => $input['descendants'] ?? null,
-                'score' => $input['score'],
-                'title' => $input['title'],
+                'score' => $input['score'] ?? null,
+                'title' => $input['title'] ?? null,
                 'text' => isset($input['text']) ?? null,
-                'by' => $input['by'],
-                'time' => $input['time'],
+                'time' => $input['time'] ?? null,
                 'deleted' => $input['deleted'] ?? false,
                 'dead' => $input['dead'] ?? false,
             ]);

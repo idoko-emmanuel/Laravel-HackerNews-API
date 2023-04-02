@@ -13,12 +13,11 @@ return new class extends Migration
     {
         Schema::create('hacker_jobs', function (Blueprint $table) {
             $table->integer('id')->unique();
-            $table->integer('by')->unsigned();
+            $table->string('by')->unsigned();
             $table->integer('score');
             $table->text('text');
             $table->integer('time');
             $table->string('title');
-            $table->string('type');
             $table->text('url')->nullable();
             $table->boolean('deleted')->default(false);
             $table->boolean('dead')->default(false);

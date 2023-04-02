@@ -10,6 +10,7 @@ class HackerJob extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'by',
         'score',
         'text',
