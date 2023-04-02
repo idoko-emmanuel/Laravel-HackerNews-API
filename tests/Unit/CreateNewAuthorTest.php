@@ -43,6 +43,11 @@ class CreateNewAuthorTest extends TestCase
         $action = new CreateNewAuthor();
         $action->create($author);
 
-        $this->assertDatabaseCount('authors', 1);
+        // Try to create the story again
+       $result = $action->create($author);
+
+       $this->assertNull($result);
+       $this->assertDatabaseCount('authors', 1);
+       $this->assertEquals(1, DB::table('authors')->count());
     }
 }

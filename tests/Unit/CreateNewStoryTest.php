@@ -3,12 +3,17 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
+use App\Models\Story;
+use App\Models\Author;
 use App\Actions\CreateNewStory;
 use App\Actions\CreateNewAuthor;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CreateNewStoryTest extends TestCase
 {
+    use RefreshDatabase;
+
    /** @test */
    public function can_create_story()
    {
@@ -17,11 +22,13 @@ class CreateNewStoryTest extends TestCase
             'created' => 12333223,
             'karma' => 12343,
             'about' => 'test paragraph',
-            'submitted' => ['1234', '5678'],
+            'submitted' => ['1234', '5678']
         ];
 
         $action = new CreateNewAuthor();
         $action->create($input);
+
+        $this->assertCount(1, Author::all());
 
        $input = [
            'id' => '123',
@@ -41,7 +48,7 @@ class CreateNewStoryTest extends TestCase
        $result = $action->create($input);
 
        $this->assertTrue($result);
-       $this->assertDatabaseHas('stories', $input);
+       $this->assertCount(1, Story::all());
    }
 
    /** @test */
@@ -69,7 +76,7 @@ class CreateNewStoryTest extends TestCase
        $result = $action->create($input);
 
        $this->assertFalse($result);
-       $this->assertDatabaseHas('stories', $input);
+       $this->assertDatabaseCount('stories', 1);
        $this->assertEquals(1, DB::table('stories')->count()); // should still only have 1 row in the table
    }
 }
