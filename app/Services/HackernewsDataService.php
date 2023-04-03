@@ -8,7 +8,7 @@ class HackernewsDataService extends DataServiceAbstract
 {
     use DataService;
     
-    const LIMIT = 2;
+    const LIMIT = 100;
     private $url, $successfulSpool, $message;//, $limit;
 
     public function __construct()

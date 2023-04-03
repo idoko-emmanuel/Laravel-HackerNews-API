@@ -141,10 +141,13 @@ Once the queue worker is running, you can add jobs to the queue using the dispat
 The app:fetch-data command is used to fetch data from the Hacker News API. To use this command, navigate to your project's root directory and run the following command in your terminal:
 
     php artisan app:fetch-data
-    
+
 This will dispatch the FetchHackernewsData job which will fetch the data from the API and store it in your database. You can configure the type of data to fetch by updating the spooltype configuration option in your config/hackernews.php file.
 
 After running the command, you will see a message indicating that the command was successful. The fetched data will be stored in your database and can be accessed via your application's models.
+
+## Schedules
+The Kernel.php file in the Console directory is used to define the schedule for the commands that need to be run periodically. In this application, we have defined a command that fetches data from the Hacker News API and it is scheduled to run twice daily at 1am and 1pm. If the command fails to execute, an email notification will be sent to the specified email address.
 
 ## Endpoints
 You can setup the version of your API endpoint in the hackernews config file. The default is set to "v1" which stands for version one.
@@ -162,6 +165,30 @@ Here are the available endpoints:
 ## Documentation
 
 Please refer to the [published documentation](https://documenter.getpostman.com/view/25554207/2s93RWMq9s) for detailed information on each endpoint and how to use them.
+
+## Testing
+
+This application comes with both unit and feature tests.
+
+To run the tests, navigate to the root directory of the project and run the following command:
+
+    php artisan test
+
+## Unit Testing
+Unit tests have been provided for the following components:
+
+- Author
+- Comment
+- Job
+- Poll
+- PollOption
+- Story
+
+## Feature Testing
+Feature tests have been provided for the HackernewsController.
+
+To speed up the testing process, it is recommended to decrease the amount of data that is fetched and stored by the HackernewsDataService.php file located in the Services directory.
+
 
 ## Contributing
 
