@@ -11,6 +11,7 @@ class Pollopt extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'by',
         'poll_id',
         'score',

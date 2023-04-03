@@ -26,29 +26,27 @@ class CreateNewPollopt
                 'time' => ['nullable', 'integer'],
                 'deleted' => ['nullable', 'boolean'],
                 'dead' => ['nullable', 'boolean'],
-                'category' => ['required', 'string']
             ])->validate();
 
-            $this->createpollopt($input, $id);
+            return $this->createpollopt($input, $id);
   
     }
 
     protected function createpollopt(array $input, $id)
     {
-        return DB::transaction(function () use ($input, $id) {
-            if (DB::table('pollopts')->where('id', $input['id'])->doesntExist()) {
-                Pollopt::create([
-                    'id' => $input['id'],
-                    'by' => $input['by'],
-                    'poll_id' => $id,
-                    'score' => $input['score'],
-                    'text' => isset($input['text']) ?? null,
-                    'time' => $input['time'] ?? null,
-                    'deleted' => $input['deleted'] ?? false,
-                    'dead' => $input['dead'] ?? false,
-                    'category' => $input['category'],
-                ]);
-            } 
-        });
+        if (DB::table('pollopts')->where('id', $input['id'])->doesntExist()) {
+            Pollopt::create([
+                'id' => $input['id'],
+                'by' => $input['by'],
+                'poll_id' => $id,
+                'score' => $input['score'],
+                'text' => $input['text'] ?? null,
+                'time' => $input['time'] ?? null,
+                'deleted' => $input['deleted'] ?? false,
+                'dead' => $input['dead'] ?? false,
+            ]);
+            return true;
+        } 
+        return false;
     }
 }
