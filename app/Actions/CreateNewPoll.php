@@ -38,12 +38,12 @@ class CreateNewPoll
         if (DB::table('polls')->where('id', $input['id'])->doesntExist()) {
             Poll::create([
                 'id' => $input['id'],
-                'by' => isset($input['by']),
-                'descendants' => $input['descendants'] ?? null,
-                'score' => $input['score'] ?? null,
+                'by' => $input['by'],
+                'descendants' => $input['descendants'] ?? 0,
+                'score' => $input['score'] ?? 0,
                 'title' => $input['title'] ?? null,
-                'text' => isset($input['text']) ?? null,
-                'time' => $input['time'] ?? null,
+                'text' => $input['text'] ?? null,
+                'time' => $input['time'] ?? 0,
                 'deleted' => $input['deleted'] ?? false,
                 'dead' => $input['dead'] ?? false,
             ]);

@@ -7,11 +7,11 @@ use App\Actions\CreateNewAuthor;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class CreateNewAuthorTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     /** @test */
     public function it_creates_a_new_author()
@@ -42,6 +42,7 @@ class CreateNewAuthorTest extends TestCase
         ];
 
         $action = new CreateNewAuthor();
+        $action->create($author);
 
         // Try to create the story again
         $result = $action->create($author);

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('by')->unsigned();
             $table->enum('category', ['top', 'new', 'show', 'ask', 'best']);
             $table->foreign('by')->references('id')->on('authors')->onDelete('cascade');
-            $table->integer('time');
+            $table->integer('time')->default(0);
             $table->integer('descendants')->nullable();
             $table->boolean('deleted')->default(false);
             $table->boolean('dead')->default(false);

@@ -10,10 +10,11 @@ use App\Actions\CreateNewAuthor;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class CreateNewStoryTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
    /** @test */
    public function can_create_story()

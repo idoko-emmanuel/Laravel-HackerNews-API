@@ -15,7 +15,7 @@ return new class extends Migration
             $table->integer('id')->unique(); 
             $table->string('by')->unsigned();
             $table->foreign('by')->references('id')->on('authors')->onDelete('cascade');
-            $table->integer('descendants')->nullable();
+            $table->integer('descendants')->default(0);
             $table->integer('score')->default(0);
             $table->string('title')->nullable();
             $table->text('text')->nullable();
