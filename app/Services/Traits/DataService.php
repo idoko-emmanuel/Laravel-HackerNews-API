@@ -140,7 +140,7 @@ trait DataService
             //create job 
             $itemDetails = (array) $itemDetails;
 
-            if($createjob->create($itemDetails))
+            if($createjob->create($itemDetails) && App::environment('testing'))
                 $this->successfulSpool++;
 
         }
