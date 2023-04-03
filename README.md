@@ -196,7 +196,7 @@ Unit tests have been provided for the following actions:
 ## Feature Testing
 Feature tests have been provided for the HackernewsController.
 
-To speed up the testing process, it is recommended to decrease the amount of data that is fetched and stored by the HackernewsDataService.php file located in the Services directory.
+To speed up the testing process, it is recommended to decrease the amount of data that is fetched and stored, edit HackernewsDataService.php file located in the Services directory by changing the value of 'LIMIT' to desired number.
 
 ## Stack Version
 Laravel 10 and PHP 8
