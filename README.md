@@ -77,25 +77,19 @@ During queued jobs, you may run into some errors when dispatching the jobs. To g
 ## Usage
 To use the HackernewsData facade, you need to first import it at the top of your file using the following code:
 
-    ```
     use App\Services\Facades\HackernewsData;
-    ```
 
 ## Storing Data
 You can then call any of the available methods to store data from the Hacker News API. For example, to store data from the maximum item:
 
-    ```
     $response = HackernewsData::spoolFromMaxItem();
-    ```
 
 ## Returning Response as JSON
 The response from the HackernewsData facade can then be returned as a JSON response using Laravel's response() function:
 
-    ```
     return response()->json([
         "message" => $response." from maximum item.",
     ], 200);
-    ```
 
 ## Example
 Here is an example of how to use the HackernewsData facade in a controller:
