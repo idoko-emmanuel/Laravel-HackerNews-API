@@ -9,13 +9,13 @@ To get started, you'll need to clone this repository and install the dependencie
 1. Clone the repository:
 
     ```
-    git clone https://github.com/yourusername/laravel-hackernews-api.git
+    git clone https://github.com/idoko-emmanuel/Laravel-HackerNews-API.git
     ```
 
 2. Navigate to the project directory:
 
     ```
-    cd laravel-hackernews-api
+    cd Laravel-HackerNews-API
     ```
 
 3. Install the dependencies:
@@ -53,19 +53,13 @@ To get started, you'll need to clone this repository and install the dependencie
     php artisan migrate
     ```
 
-8. Seed the database with data from Hackernews:
-
-    ```
-    php artisan db:seed
-    ```
-
-9. Start the server:
+8. Start the server:
 
     ```
     php artisan serve
     ```
 
-10. You're all set! You can now make requests to the API at http://localhost:8000/api.
+9. You're all set! You can now make requests to the API at http://localhost:8000/api.
 
 ## Endpoints
 
@@ -78,6 +72,10 @@ Here are the available endpoints:
 - `GET /api/spool/ask`: Gets the latest Ask HN posts.
 - `GET /api/spool/job`: Gets the latest job posts.
 - `GET /api/spool/best`: Gets the best stories.
+
+## Documentation
+
+Please refer to the [published documentation](https://documenter.getpostman.com/view/25554207/2s93RWMq9s) for detailed information on each endpoint and how to use them.
 
 ## Contributing
 
