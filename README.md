@@ -58,10 +58,25 @@ To get started, you'll need to clone this repository and install the dependencie
     ```
     php artisan serve
     ```
+## Config
+You can configure the Laravel HackerNews API project by modifying the hackernews.php config file located in the config folder.
 
-9. You're all set! You can now make requests to the API at http://localhost:8000/api.
+### Setting the Hacker News URL Endpoint
+You can set the Hacker News URL endpoint from your .env file by using the HACKERNEWS_URL variable. If it's not set, the available default in the configuration file will be used.
+
+### API Version
+You can setup the version of your API endpoint in the hackernews.php config file. The default is set to "v1" which stands for version one. To set it up, update the value of the apiversion key to the desired version.
+
+### Spool Type
+For queued jobs, you can set the spool type as well from the hackernews.php config file in the config folder. You can set spool type by assigning any of these types: max, top, new, show, ask, job, best. The default is max.
+
+### Email for Output on Dispatch Failure
+During queued jobs, you may run into some errors when dispatching the jobs. To get proper error message, set the email for the messages to return to in the hackernews.php parameter. Update the email key to your desired value.
+
+9. You're all set! You can now make requests to the API at http://127.0.0.1:8000/api/v1/.
 
 ## Endpoints
+You can setup the version of your API endpoint in the hackernews config file. The default is set to "v1" which stands for version one.
 
 Here are the available endpoints:
 
