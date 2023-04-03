@@ -154,13 +154,13 @@ You can setup the version of your API endpoint in the hackernews config file. Th
 
 Here are the available endpoints:
 
-- `GET /api/spool/max`: Gets the maximum item ID.
-- `GET /api/spool/top`: Gets the top stories.
-- `GET /api/spool/new`: Gets the newest stories.
-- `GET /api/spool/show`: Gets a specific story.
-- `GET /api/spool/ask`: Gets the latest Ask HN posts.
-- `GET /api/spool/job`: Gets the latest job posts.
-- `GET /api/spool/best`: Gets the best stories.
+- `GET /api/v1/spool/max`: Gets the maximum item ID.
+- `GET /api/v1/spool/top`: Gets the top stories.
+- `GET /api/v1/spool/new`: Gets the newest stories.
+- `GET /api/v1/spool/show`: Gets a specific story.
+- `GET /api/v1/spool/ask`: Gets the latest Ask HN posts.
+- `GET /api/v1/spool/job`: Gets the latest job posts.
+- `GET /api/v1/spool/best`: Gets the best stories.
 
 ## Documentation
 
