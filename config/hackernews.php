@@ -6,9 +6,7 @@ return [
     | Hackernews Url
     |--------------------------------------------------------------------------
     |
-    | This value is the name of your application. This value is used when the
-    | framework needs to place the application's name in a notification or
-    | any other location as required by the application or its packages.
+    | This url is used to make request to the hacker news endpoint
     |
     */
 
@@ -19,13 +17,11 @@ return [
     | Limit
     |--------------------------------------------------------------------------
     |
-    | This value is the name of your application. This value is used when the
-    | framework needs to place the application's name in a notification or
-    | any other location as required by the application or its packages.
+    | 
     |
     */
 
-    'limit' => 20,
+    //'limit' => 20,
 
     /*
     |--------------------------------------------------------------------------
