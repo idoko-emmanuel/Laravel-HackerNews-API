@@ -18,7 +18,7 @@ trait DataService
             
             $comment_ids = $response->kids;
             
-            // save comments
+            // Loop through comment IDs
             foreach ($comment_ids as $comment_id) {
                 $this->newComment($comment_id, $post_id, $source);
             }
@@ -38,7 +38,7 @@ trait DataService
             
             $options_ids = $response->parts;
             
-            // save polls
+            // Loop through polls
             foreach ($options_ids as $option_id) {
                 $option_response = $this->getItemDetails($comment_id);
                 if (!is_null($option_response)) {
@@ -139,7 +139,7 @@ trait DataService
 
             //create job 
             $itemDetails = (array) $itemDetails;
-            
+
             if($createjob->create($itemDetails))
                 $this->successfulSpool++;
 
