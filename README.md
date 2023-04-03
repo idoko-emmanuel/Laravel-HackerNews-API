@@ -166,7 +166,7 @@ Here are the available endpoints:
 - `GET /api/v1/spool/max`: Gets the maximum item ID.
 - `GET /api/v1/spool/top`: Gets the top stories.
 - `GET /api/v1/spool/new`: Gets the newest stories.
-- `GET /api/v1/spool/show`: Gets a specific story.
+- `GET /api/v1/spool/show`: Gets a show story.
 - `GET /api/v1/spool/ask`: Gets the latest Ask HN posts.
 - `GET /api/v1/spool/job`: Gets the latest job posts.
 - `GET /api/v1/spool/best`: Gets the best stories.
@@ -184,14 +184,14 @@ To run the tests, navigate to the root directory of the project and run the foll
     php artisan test
 
 ## Unit Testing
-Unit tests have been provided for the following components:
+Unit tests have been provided for the following actions:
 
-- Author
-- Comment
-- Job
-- Poll
-- PollOption
-- Story
+- CreateNewAuthor
+- CreateNewComment
+- CreateNewJob
+- CreateNewPoll
+- CreateNewPollopt
+- CreateNewStory
 
 ## Feature Testing
 Feature tests have been provided for the HackernewsController.
