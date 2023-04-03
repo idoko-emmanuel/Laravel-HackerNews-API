@@ -7,6 +7,7 @@ use App\Actions\CreateNewStory;
 use App\Actions\CreateNewAuthor;
 use App\Actions\CreateNewComment;
 use App\Actions\CreateNewPollopt;
+use Illuminate\Support\Facades\App;
 
 trait DataService 
 {
