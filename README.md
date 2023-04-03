@@ -119,18 +119,22 @@ In the example above, the spoolmax() method stores data from the maximum item an
 ## Jobs
 To store data from the Hackernews API, you can use the FetchHackernewsData job. This job stores the data according to the spooltype specified in the configuration file.
 
+You can run your queue worker with this command:
+
+    php artisan queue:work
+
 To setup your queue to use the database queue driver, kindly refer to the [documentation](https://laravel.com/docs/10.x/queues#driver-prerequisites)
 
 ## Configuration
 To configure the spooltype for the Hackernews API, set the 'spooltype' value in your hackernews.php file. The options are:
 
-max: spool from maximum item.
-top: spool from top stories.
-new: spool from new stories.
-show: spool from show stories.
-ask: spool from ask stories.
-job: spool from jobs.
-best: spool from best stories.
+- max: spool from maximum item.
+- top: spool from top stories.
+- new: spool from new stories.
+- show: spool from show stories.
+- ask: spool from ask stories.
+- job: spool from jobs.
+- best: spool from best stories.
 
 ## Execution
 To execute the job, you can run the php artisan queue:work command. This will start the Laravel queue worker, which will process any pending jobs in the queue.
@@ -148,6 +152,11 @@ After running the command, you will see a message indicating that the command wa
 
 ## Schedules
 The Kernel.php file in the Console directory is used to define the schedule for the commands that need to be run periodically. In this application, we have defined a command that fetches data from the Hacker News API and it is scheduled to run twice daily at 1am and 1pm. If the command fails to execute, an email notification will be sent to the specified email address.
+
+To run the task scheduler Locally use this command:
+
+    php artisan schedule:work
+
 
 ## Endpoints
 You can setup the version of your API endpoint in the hackernews config file. The default is set to "v1" which stands for version one.
