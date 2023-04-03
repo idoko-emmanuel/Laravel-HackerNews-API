@@ -198,6 +198,8 @@ Feature tests have been provided for the HackernewsController.
 
 To speed up the testing process, it is recommended to decrease the amount of data that is fetched and stored by the HackernewsDataService.php file located in the Services directory.
 
+## Stack Version
+Laravel 10 and PHP 8
 
 ## Contributing
 
