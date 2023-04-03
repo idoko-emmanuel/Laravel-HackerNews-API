@@ -100,7 +100,6 @@ The response from the HackernewsData facade can then be returned as a JSON respo
 ## Example
 Here is an example of how to use the HackernewsData facade in a controller:
 
-    ```
     namespace App\Http\Controllers;
 
     use App\Services\Facades\HackernewsData;
@@ -116,7 +115,6 @@ Here is an example of how to use the HackernewsData facade in a controller:
             ], 200);
         }
     }
-    ```
 
 In the example above, the spoolmax() method stores data from the maximum item and returns the response as a JSON response. You can use this as a starting point for creating your own methods to store data from other endpoints in the Hacker News API.
 
