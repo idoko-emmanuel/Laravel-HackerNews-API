@@ -79,7 +79,6 @@ To use the HackernewsData facade, you need to first import it at the top of your
 
     ```
     use App\Services\Facades\HackernewsData;
-
     ```
 
 ## Storing Data
@@ -87,7 +86,6 @@ You can then call any of the available methods to store data from the Hacker New
 
     ```
     $response = HackernewsData::spoolFromMaxItem();
-
     ```
 
 ## Returning Response as JSON
@@ -97,7 +95,6 @@ The response from the HackernewsData facade can then be returned as a JSON respo
     return response()->json([
         "message" => $response." from maximum item.",
     ], 200);
-
     ```
 
 ## Example
@@ -119,7 +116,6 @@ Here is an example of how to use the HackernewsData facade in a controller:
             ], 200);
         }
     }
-
     ```
 
 In the example above, the spoolmax() method stores data from the maximum item and returns the response as a JSON response. You can use this as a starting point for creating your own methods to store data from other endpoints in the Hacker News API.
