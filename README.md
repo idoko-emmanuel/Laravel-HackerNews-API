@@ -58,6 +58,7 @@ To get started, you'll need to clone this repository and install the dependencie
     ```
     php artisan serve
     ```
+
 ## Config
 You can configure the Laravel HackerNews API project by modifying the hackernews.php config file located in the config folder.
 
@@ -72,6 +73,57 @@ For queued jobs, you can set the spool type as well from the hackernews.php conf
 
 ### Email for Output on Dispatch Failure
 During queued jobs, you may run into some errors when dispatching the jobs. To get proper error message, set the email for the messages to return to in the hackernews.php parameter. Update the email key to your desired value.
+
+## Usage
+To use the HackernewsData facade, you need to first import it at the top of your file using the following code:
+
+    ```
+    use App\Services\Facades\HackernewsData;
+
+    ```
+
+## Storing Data
+You can then call any of the available methods to store data from the Hacker News API. For example, to store data from the maximum item:
+
+    ```
+    $response = HackernewsData::spoolFromMaxItem();
+
+    ```
+
+## Returning Response as JSON
+The response from the HackernewsData facade can then be returned as a JSON response using Laravel's response() function:
+
+    ```
+    return response()->json([
+        "message" => $response." from maximum item.",
+    ], 200);
+
+    ```
+
+## Example
+Here is an example of how to use the HackernewsData facade in a controller:
+
+    ```
+    namespace App\Http\Controllers;
+
+    use App\Services\Facades\HackernewsData;
+
+    class HackernewsController extends Controller
+    {
+        public function spoolmax()
+        {
+            $response = HackernewsData::spoolFromMaxItem();
+
+            return response()->json([
+                "message" => $response." from maximum item.",
+            ], 200);
+        }
+    }
+
+    ```
+
+In the example above, the spoolmax() method stores data from the maximum item and returns the response as a JSON response. You can use this as a starting point for creating your own methods to store data from other endpoints in the Hacker News API.
+
 
 9. You're all set! You can now make requests to the API at http://127.0.0.1:8000/api/v1/.
 
