@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->call(function () {
             dispatch(new FetchHackernewsData());
-        })->everyFiveMinutes()
+        })->twiceDaily(1, 13)
         ->emailOutputOnFailure(config('hackernews.email'));
     }
 

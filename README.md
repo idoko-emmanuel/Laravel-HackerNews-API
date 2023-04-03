@@ -137,6 +137,14 @@ To execute the job, you can run the php artisan queue:work command. This will st
 
 Once the queue worker is running, you can add jobs to the queue using the dispatch method.
 
+## Command
+The app:fetch-data command is used to fetch data from the Hacker News API. To use this command, navigate to your project's root directory and run the following command in your terminal:
+
+    php artisan app:fetch-data
+    
+This will dispatch the FetchHackernewsData job which will fetch the data from the API and store it in your database. You can configure the type of data to fetch by updating the spooltype configuration option in your config/hackernews.php file.
+
+After running the command, you will see a message indicating that the command was successful. The fetched data will be stored in your database and can be accessed via your application's models.
 
 ## Endpoints
 You can setup the version of your API endpoint in the hackernews config file. The default is set to "v1" which stands for version one.
