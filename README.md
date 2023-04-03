@@ -59,6 +59,10 @@ To get started, you'll need to clone this repository and install the dependencie
     php artisan serve
     ```
 
+
+9. You're all set! You can now make requests to the API at http://127.0.0.1:8000/api/v1/.
+
+
 ## Config
 You can configure the Laravel HackerNews API project by modifying the hackernews.php config file located in the config folder.
 
@@ -112,8 +116,27 @@ Here is an example of how to use the HackernewsData facade in a controller:
 
 In the example above, the spoolmax() method stores data from the maximum item and returns the response as a JSON response. You can use this as a starting point for creating your own methods to store data from other endpoints in the Hacker News API.
 
+## Jobs
+To store data from the Hackernews API, you can use the FetchHackernewsData job. This job stores the data according to the spooltype specified in the configuration file.
 
-9. You're all set! You can now make requests to the API at http://127.0.0.1:8000/api/v1/.
+To setup your queue to use the database queue driver, kindly refer to the [documentation](https://laravel.com/docs/10.x/queues#driver-prerequisites)
+
+## Configuration
+To configure the spooltype for the Hackernews API, set the 'spooltype' value in your hackernews.php file. The options are:
+
+max: spool from maximum item.
+top: spool from top stories.
+new: spool from new stories.
+show: spool from show stories.
+ask: spool from ask stories.
+job: spool from jobs.
+best: spool from best stories.
+
+## Execution
+To execute the job, you can run the php artisan queue:work command. This will start the Laravel queue worker, which will process any pending jobs in the queue.
+
+Once the queue worker is running, you can add jobs to the queue using the dispatch method.
+
 
 ## Endpoints
 You can setup the version of your API endpoint in the hackernews config file. The default is set to "v1" which stands for version one.
