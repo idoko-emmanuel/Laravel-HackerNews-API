@@ -11,18 +11,29 @@ use Illuminate\Support\Facades\App;
 
 trait DataService 
 {
-    /***
-     * checks the signature of a bitcoin signed message.
+    /**
+     * spool check.
      *
-     * @param $address
-     * @param $encodedSignature
-     * @param $message
+     * @return bool
+     */
+
+    protected function spoolcheck(): bool 
+    {
+        if($this->successfulSpool === self::LIMIT)
+                return true;
+    }
+
+    /**
+     * creates a comment.
+     *
+     * @param $post_id
+     * @param $source
      * @return bool
      */
 
     protected function CreateComment($post_id, $source) : bool
     {
-        
+        //fetch data from item and loop through the kids to get the comments
         $response = $this->getItemDetails($post_id);
         if (!is_null($response) && isset($response->kids)) {
             
@@ -40,18 +51,18 @@ trait DataService
         }
     }
 
-    /***
-     * checks the signature of a bitcoin signed message.
+    /**
+     * creates a poll option.
      *
-     * @param $address
-     * @param $encodedSignature
-     * @param $message
+     * @param $post_id
      * @return bool
      */
 
     protected function CreatePollopt($post_id) : bool
     {
         $createoption = new CreateNewPollopt;
+
+        //fetch data from item and loop through the parts to create poll option
         $response = $this->getItemDetails($post_id);
         if (!is_null($response) && isset($response->parts)) {
             
@@ -75,13 +86,11 @@ trait DataService
         }
     }
 
-    /***
-     * checks the signature of a bitcoin signed message.
+    /**
+     * fetch data from endpoint.
      *
-     * @param $address
-     * @param $encodedSignature
-     * @param $message
-     * @return bool
+     * @param $itemid
+     * @return mixed
      */
 
     protected function getItemDetails($itemId) : mixed
@@ -89,18 +98,19 @@ trait DataService
         return  $itemDetails = json_decode(file_get_contents($this->url."item/{$itemId}.json?print=pretty"));
     }
 
-    /***
-     * checks the signature of a bitcoin signed message.
+    /**
+     * create new comment.
      *
-     * @param $address
-     * @param $encodedSignature
-     * @param $message
+     * @param $comment_id
+     * @param $post_id
+     * @param $source
      * @return bool
      */
 
     protected function newComment($comment_id, $post_id, $source) : bool
     {
         $createcomment = new CreateNewComment;
+        //fetch item data and create new comment
         $comment_response = $this->getItemDetails($comment_id);
         if (!is_null($comment_response)) {
             $comment_response = (array) $comment_response;
@@ -114,13 +124,12 @@ trait DataService
         return true;
     }
 
-    /***
-     * checks the signature of a bitcoin signed message.
+    /**
+     * create a story.
      *
-     * @param $address
-     * @param $encodedSignature
-     * @param $message
-     * @return bool
+     * @param $itemDetails
+     * @param $category
+     * @return mixed
      */
 
     protected function story($itemDetails, $category) : mixed
@@ -150,21 +159,19 @@ trait DataService
         return true;
     }
 
-    /***
-     * checks the signature of a bitcoin signed message.
+    /**
+     * creates a poll.
      *
-     * @param $address
-     * @param $encodedSignature
-     * @param $message
-     * @return bool
+     * @param $itemDetails
+     * @return mixed
      */
 
     protected function poll($itemDetails) : mixed
     {
+        $this->spoolcheck();
+
         $createpoll = new CreateNewPoll;
         if(isset($itemDetails->by)) {
-            if($this->successfulSpool === self::LIMIT)
-                return true;
             //create author
             $this->CreateAuthor($itemDetails->by);
 
@@ -183,21 +190,19 @@ trait DataService
         return true;
     }
 
-    /***
-     * checks the signature of a bitcoin signed message.
+    /**
+     * creates job.
      *
-     * @param $address
-     * @param $encodedSignature
-     * @param $message
-     * @return bool
+     * @param $itemDetails
+     * @return mixed
      */
 
     protected function job($itemDetails) : mixed
     {
+        $this->spoolcheck();
+
         $createjob = new CreateNewJob;
         if(isset($itemDetails->by) && isset($itemDetails->id)) {
-            if($this->successfulSpool === self::LIMIT)
-                return true;
             //create author
             $this->CreateAuthor($itemDetails->by);
 
@@ -212,13 +217,11 @@ trait DataService
         return true;
     }
 
-    /***
-     * checks the signature of a bitcoin signed message.
+    /**
+     * get item type.
      *
-     * @param $address
-     * @param $encodedSignature
-     * @param $message
-     * @return bool
+     * @param $itemId
+     * @return string
      */
 
     public function getItemType($itemId):string
@@ -228,12 +231,10 @@ trait DataService
             return $item->type;
     }
 
-    /***
-     * checks the signature of a bitcoin signed message.
+    /**
+     * create author.
      *
-     * @param $address
-     * @param $encodedSignature
-     * @param $message
+     * @param $authorid
      * @return bool
      */
 
@@ -251,12 +252,11 @@ trait DataService
         return false;
     }
 
-    /***
-     * checks the signature of a bitcoin signed message.
+    /**
+     * create a story, poll, job or comment.
      *
-     * @param $address
-     * @param $encodedSignature
-     * @param $message
+     * @param $itemId
+     * @param $category
      * @return bool
      */
     public function CreateStory($itemId, $category = 'new'): bool

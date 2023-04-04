@@ -5,6 +5,8 @@ abstract class DataServiceAbstract
 {
     private $url, $successfulSpool;
 
+    abstract protected function spoolcheck() : bool;
+
     abstract protected function CreateComment(int $post_id, string $source) : bool;
 
     abstract protected function CreatePollopt(int $post_id) : bool;

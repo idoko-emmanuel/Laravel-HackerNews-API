@@ -19,7 +19,7 @@ class HackernewsDataService extends DataServiceAbstract
         //$this->limit = config('hackernews.limit');
     }
 
-    /***
+    /**
      * Spool from maximum item and iterate backwards to create create each story/poll/job.
      *
      * @return mixed
@@ -42,7 +42,7 @@ class HackernewsDataService extends DataServiceAbstract
         return  $this->successfulSpool.''.$this->message;
     }
 
-    /***
+    /**
      * Spool from top stories, loop through to create create each story/poll/job.
      *
      * @return mixed
@@ -64,7 +64,7 @@ class HackernewsDataService extends DataServiceAbstract
         return  $this->successfulSpool.''.$this->message;
     }
 
-    /***
+    /**
      * Spool from new stories, loop through to create create each story/poll/job.
      *
      * @return mixed
@@ -87,7 +87,7 @@ class HackernewsDataService extends DataServiceAbstract
         return  $this->successfulSpool.''.$this->message;
     }
 
-    /***
+    /**
      * Spool from show stories, loop through to create create each story/poll/job.
      *
      * @return mixed
@@ -110,7 +110,7 @@ class HackernewsDataService extends DataServiceAbstract
         return  $this->successfulSpool.''.$this->message;
     }
 
-    /***
+    /**
      * Spool from ask stories, loop through to create create each story/poll/job.
      *
      * @return mixed
@@ -133,7 +133,7 @@ class HackernewsDataService extends DataServiceAbstract
         return  $this->successfulSpool.''.$this->message;
     }
 
-    /***
+    /**
      * Spool from new jobs, loop through to create create each job.
      *
      * @return mixed
@@ -156,7 +156,7 @@ class HackernewsDataService extends DataServiceAbstract
         return  $this->successfulSpool.''.$this->message;
     }
 
-    /***
+    /**
      * Spool from best stories, loop through to create create each story/poll/job.
      *
      * @return mixed
