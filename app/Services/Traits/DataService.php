@@ -11,6 +11,15 @@ use Illuminate\Support\Facades\App;
 
 trait DataService 
 {
+    /***
+     * checks the signature of a bitcoin signed message.
+     *
+     * @param $address
+     * @param $encodedSignature
+     * @param $message
+     * @return bool
+     */
+
     protected function CreateComment($post_id, $source) : bool
     {
         
@@ -30,6 +39,15 @@ trait DataService
             return false;
         }
     }
+
+    /***
+     * checks the signature of a bitcoin signed message.
+     *
+     * @param $address
+     * @param $encodedSignature
+     * @param $message
+     * @return bool
+     */
 
     protected function CreatePollopt($post_id) : bool
     {
@@ -57,10 +75,28 @@ trait DataService
         }
     }
 
+    /***
+     * checks the signature of a bitcoin signed message.
+     *
+     * @param $address
+     * @param $encodedSignature
+     * @param $message
+     * @return bool
+     */
+
     protected function getItemDetails($itemId) : mixed
     {
         return  $itemDetails = json_decode(file_get_contents($this->url."item/{$itemId}.json?print=pretty"));
     }
+
+    /***
+     * checks the signature of a bitcoin signed message.
+     *
+     * @param $address
+     * @param $encodedSignature
+     * @param $message
+     * @return bool
+     */
 
     protected function newComment($comment_id, $post_id, $source) : bool
     {
@@ -77,6 +113,15 @@ trait DataService
         }
         return true;
     }
+
+    /***
+     * checks the signature of a bitcoin signed message.
+     *
+     * @param $address
+     * @param $encodedSignature
+     * @param $message
+     * @return bool
+     */
 
     protected function story($itemDetails, $category) : mixed
     {
@@ -105,6 +150,15 @@ trait DataService
         return true;
     }
 
+    /***
+     * checks the signature of a bitcoin signed message.
+     *
+     * @param $address
+     * @param $encodedSignature
+     * @param $message
+     * @return bool
+     */
+
     protected function poll($itemDetails) : mixed
     {
         $createpoll = new CreateNewPoll;
@@ -129,6 +183,15 @@ trait DataService
         return true;
     }
 
+    /***
+     * checks the signature of a bitcoin signed message.
+     *
+     * @param $address
+     * @param $encodedSignature
+     * @param $message
+     * @return bool
+     */
+
     protected function job($itemDetails) : mixed
     {
         $createjob = new CreateNewJob;
@@ -149,6 +212,15 @@ trait DataService
         return true;
     }
 
+    /***
+     * checks the signature of a bitcoin signed message.
+     *
+     * @param $address
+     * @param $encodedSignature
+     * @param $message
+     * @return bool
+     */
+
     public function getItemType($itemId):string
     {
         $item = $this->getItemDetails($itemId);
@@ -156,6 +228,14 @@ trait DataService
             return $item->type;
     }
 
+    /***
+     * checks the signature of a bitcoin signed message.
+     *
+     * @param $address
+     * @param $encodedSignature
+     * @param $message
+     * @return bool
+     */
 
     public function CreateAuthor($authorid) : bool
     {
@@ -171,6 +251,14 @@ trait DataService
         return false;
     }
 
+    /***
+     * checks the signature of a bitcoin signed message.
+     *
+     * @param $address
+     * @param $encodedSignature
+     * @param $message
+     * @return bool
+     */
     public function CreateStory($itemId, $category = 'new'): bool
     {
         $itemDetails = $this->getItemDetails($itemId);

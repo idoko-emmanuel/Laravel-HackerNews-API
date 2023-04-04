@@ -10,10 +10,10 @@ class CreateNewStory
 {
 
     /**
-     * Create a newly registered user.
+     * Create a new story.
      *
      * @param  array  $input
-     * @return \App\Models\User
+     * @return bool
      */
     public function create(array $input)
     {

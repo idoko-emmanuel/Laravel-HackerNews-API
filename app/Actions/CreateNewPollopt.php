@@ -13,7 +13,8 @@ class CreateNewPollopt
      * Create a newly registered user.
      *
      * @param  array  $input
-     * @return \App\Models\User
+     * @param int   $id
+     * @return bool
      */
     public function create(array $input, $id)
     {

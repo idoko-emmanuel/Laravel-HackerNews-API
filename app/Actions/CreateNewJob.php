@@ -10,10 +10,10 @@ class CreateNewJob
 {
 
     /**
-     * Create a newly registered user.
+     * Create a new job.
      *
      * @param  array  $input
-     * @return \App\Models\User
+     * @return bool
      */
     public function create(array $input)
     {

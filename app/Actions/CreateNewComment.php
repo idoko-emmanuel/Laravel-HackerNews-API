@@ -13,10 +13,11 @@ class CreateNewComment
 {
 
     /**
-     * Create a newly registered user.
+     * Create a new comment.
      *
      * @param  array  $input
-     * @return \App\Models\User
+     * @param int $id
+     * @return bool
      */
     public function createnew(array $input, $id)
     {
