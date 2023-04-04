@@ -21,6 +21,8 @@ trait DataService
     {
         if($this->successfulSpool === self::LIMIT)
                 return true;
+
+        return false;
     }
 
     /**
@@ -134,11 +136,12 @@ trait DataService
 
     protected function story($itemDetails, $category) : mixed
     {
+        if($this->spoolcheck())
+            return true;
+            
         $createstory = new CreateNewStory;
         //create author, story and comment if author is available
         if(isset($itemDetails->by)) {
-            if($this->successfulSpool === self::LIMIT)
-                return true;
             //create author
             $this->CreateAuthor($itemDetails->by);
 
@@ -168,7 +171,9 @@ trait DataService
 
     protected function poll($itemDetails) : mixed
     {
-        $this->spoolcheck();
+
+        if($this->spoolcheck())
+            return true;
 
         $createpoll = new CreateNewPoll;
         if(isset($itemDetails->by)) {
@@ -199,7 +204,8 @@ trait DataService
 
     protected function job($itemDetails) : mixed
     {
-        $this->spoolcheck();
+        if($this->spoolcheck())
+            return true;
 
         $createjob = new CreateNewJob;
         if(isset($itemDetails->by) && isset($itemDetails->id)) {
